@@ -16,6 +16,9 @@
 class Graph {
 public:
     Graph();
+    Graph(ll tl){
+        totalLinks = tl;
+    }
     void setLinks(vector < pair<ll, ll> > links);
     virtual ~Graph();
     pair<ll, ll>   getNextMostSimilar();
