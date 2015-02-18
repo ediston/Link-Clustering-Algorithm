@@ -1,61 +1,81 @@
 /*
- * File:   Graph.h
+ * File:   Graph.cpp
  * Author: vivekdhiman
  *
  * Created on 12 December, 2014, 10:34 PM
  */
 
-#ifndef GRAPH_H
-#define	GRAPH_H
+#include "Graph.h"
 
-#include "Node.h"
-#include "Link.h"
-#include <queue>
+Graph::Graph() {
+}
 
+Graph::~Graph() {
+}
 
-class Graph {
-public:
-    Graph();
-    void setLinks(vector < pair<ll, ll> > links);
-    virtual ~Graph();
-    pair<ll, ll>   getNextMostSimilar();
-    void calculateSimilarities();
-    int getNeighbours(int a);
-    int getCommonNeighbours(int a, int b);
-private:
+void Graph::setLinks(vector < pair<ll, ll> > links) {
+    totalLinks = links.size();
+    allLinks = links;
+}
 
-    double threshold;
-    priority_queue < pair<double, pair<ll, ll> >  > similarityQ; // between two links with shared node
-    vector < pair<ll, ll> > allLinks;
-    ll totalLinks;
-    ll totalCommunities;
+pair<ll, ll>  Graph::getNextMostSimilar() {
+    pair<ll, ll> topPair = similarityQ.top().second;
+    similarityQ.pop();
+    return topPair;
+}
 
-    //--- Union set ----
-    vector <long long> community,  rank ;
-    void initUnionFind(ll N) {
-        rank.assign(N, 0);
-        community.assign(N, 0);
-        for (ll i = 0; i < N; i++)
-            community[i] = i;
+int Graph::getNeighbours(int a){
+    int sum = 0;
+    for(int i=0; i<allLinks.size(); i++){
+        if(allLinks[i].first == a || allLinks[i].second == a ) sum++;
     }
-    ll findCommunity(ll i) {
-        return (community[i] == i) ? i : (community[i] = findCommunity(community[i]));
+    return sum-1;
+}
+
+int Graph::getCommonNeighbours(int a, int b){
+    int sum = 0;
+    for(int i=0; i<allLinks.size(); i++){
+        if(allLinks[i].first == a || allLinks[i].first == b ||
+           allLinks[i].second == a || allLinks[i].second == b) sum++;
     }
-    bool isSameCommunity(ll i, ll j) {
-        return findCommunity(i) == findCommunity(j);
+    return sum-1;
+}
+
+void Graph::calculateSimilarities() {
+    vector<set<ll> >totalNeghbours(totalLinks, 0);
+    long nodeA, nodeB, keystoneNode;
+    long unionAB;
+    long interAB;
+    double similarity;
+    for(int i=0; i<allLinks.size(); i++){
+
     }
-    void unionCommunity(ll i, ll j) {
-        if (!isSameCommunity(i, j)) { // if from different set
-            ll x = findCommunity(i), y = findCommunity(j);
-            if (rank[x] > rank[y])
-                community[y] = x; // rank keeps the tree short
-            else {
-                community[x] = y;
-                if (rank[x] == rank[y]) rank[y]++;
+    for(int i=0; i<allLinks.size(); i++){
+        for(int j=i+1; j<allLinks.size(); j++){
+            if(allLinks[i].first == allLinks[j].first){
+                nodeA = allLinks[i].second; nodeB = allLinks[j].second;
+                keystoneNode = allLinks[i].first;
+            }else if(allLinks[i].second == allLinks[j].second){
+                nodeA = allLinks[i].first; nodeB = allLinks[j].first;
+                keystoneNode = allLinks[i].second;
+            }else if(allLinks[i].first == allLinks[j].second){
+                nodeA = allLinks[i].second; nodeB = allLinks[j].first;
+                keystoneNode = allLinks[i].first;
+            }else if(allLinks[i].second == allLinks[j].first){
+                nodeA = allLinks[i].first; nodeB = allLinks[j].second;
+                keystoneNode = allLinks[i].second;
+            }else{
+                continue;
             }
+            totalNeghboursOfA =0; totalNeghboursOfB =0; totalNeghbours = 0;
+            getNeighbours(nodeA, nodeB, &totalNeghboursOfA, &totalNeghboursOfB, &totalNeghbours);
+            unionAB = totalNeghboursOfA + totalNeghboursOfB - totalNeghbours;
+            similarity = (double)(interAB)/(double)unionAB;
+            similarityQ.push(make_pair(similarity, make_pair(i,j)));
         }
     }
-};
+}
 
-#endif	/* GRAPH_H */
+
+
 
