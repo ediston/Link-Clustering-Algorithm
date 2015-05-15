@@ -3,6 +3,8 @@
 
 */
 #include <bits/stdc++.h>
+using namespace std;
+
 struct node{
   long long nodeId;
   node *next;
