@@ -1,37 +1,48 @@
-/*
-
-
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
 struct node{
-  long long nodeId;
-  node *next;
+    long long nodeId;
+    node *next;
+};
+
+struct headNode{
+    long long size;
+    node *next;
 };
 
 node *getNewNode(){
   node * newnode = new node;
   newnode->next = NULL;
+  newnode->nodeId = 0;
   return newnode;
 }
 
-void addNode(node *head, long long newNodeId){
+headNode *getNewHeadNode(){
+  headNode * newnode = new headNode;
+  newnode->next = NULL;
+  newnode->size = 0;
+  return newnode;
+}
+
+void addNode(headNode *head, long long newNodeId){
   node *tempnode = getNewNode();
   node *prevnode = getNewNode();
-  prevnode = head;
+  node*newNode = getNewNode();
+  prevnode = NULL;
   tempnode = head->next;
   while(tempnode && tempnode->nodeId<newNodeId){
     prevnode = tempnode;
     tempnode = tempnode->next;
   }
-  node*newNode = getNewNode();
+  head->size++;
   newNode->nodeId = newNodeId;
-  prevnode->next = newNode;
+  if(prevnode) prevnode->next = newNode;
+  else head->next = newNode;
   newNode->next = tempnode;
 }
 
-long long getCommonNodesCount(node *head1, node *head2){
+long long getCommonNodesCount(headNode *head1, headNode *head2){
   long long count = 0;
   node *ll1node = getNewNode();
   node *ll2node = getNewNode();
@@ -51,3 +62,13 @@ long long getCommonNodesCount(node *head1, node *head2){
   return count;
 }
 
+void deleteLL(headNode *head){
+    node *ll1node = head->next;
+    node *ll2node = head->next;
+    delete head;
+    while(ll1node){
+        ll2node = ll1node->next;
+        delete ll1node;
+        ll1node = ll2node;
+    }
+}
