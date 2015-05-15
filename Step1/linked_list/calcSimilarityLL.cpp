@@ -16,8 +16,7 @@
 // the output jacc file...)
 
 // CORRECTNESS:
-//  Returns same jaccard file as calcAndWrite_Jaccards.cpp, as shown
-//  by compareTwoJaccs.py , provided by the author.
+//  Returns same jaccard file as calcAndWrite_Jaccards.cpp, provided by the origina authors.
 #include<linkedlist.h>
 map<long long, headNode*> nodeids;
 map<long long, headNode*> :: iterator it;
