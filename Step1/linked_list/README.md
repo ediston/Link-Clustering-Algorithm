@@ -5,21 +5,24 @@ Why we doing this?<br>
 
 Implementation Details:<br>
 1. LinkedList.h and LinkedList.cpp contains the linked list implementation<br>
-2. calcSimilarity.cpp is the dirving file<br>
+2. calcSimilarityLL.cpp is the dirving file<br>
 
+ 
 Linked List Implementation<br>
-1.First linked list node structure.<br>
+1.Create map<pair<long,long>, double> storedSimilarityHashTable<br>
+2.Create a map<long long, node* > <br>
+3.First linked list node structure.<br>
   struct node{<br>
     long long nodeid;<br>
     node* next;<br>
   };<br>
 
-2.Implementation of sub steps<br>
+4.Implementation of sub steps<br>
 Step1.1<br>
 Here we will combine Step1.1 and Step1.2 of the original implementation<br>
 Method: Loop from step 1 to 5 till the end of input file<br>
   1. Read an edge from the file, E= (n_i n_j)<br>
-  2. Check if this nodeid has been added before, maintain a map<long long, node* > nodeids<br>
+  2. Check if this nodeid has been added before, maintain nodeids<br>
   3. If not added then create a new linked list head and add it to nodeids map.<br>
   4. Else add n_i to Linkedlist of n_j and add n_j to Linkedlist of n_i<br>
   5. All additions will be done keeping the linked list in sorted order<br>
@@ -33,6 +36,11 @@ Complexity: O(n^2)<br>
 
 Step 1.4 For the two given nodes(n_i, n_j) and the keystone node count the common neighbors for the two nodes<br>
 Method: We iterate through the neighbors of the two nodes.<br>
+Method: 
+  1. For the two nodes(n_i, n_j) check if we have in the storedSimilarityHashTable.<br>
+  2. If not then iterate through the neighbors of the two nodes to get the count of common neighbors and go to step 1.5<br>
+  3. Go to step 1.6<br>
+   
 Complexity: O(len(Adj(n_i)) + len(Adj(n_j)))<br>
 
 Step 1.5 Calculate the similarity measure.<br>
