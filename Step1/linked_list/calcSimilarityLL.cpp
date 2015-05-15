@@ -51,10 +51,12 @@ int main (int argc, char const *argv[]){
         if(nodeids.count(ni)==0){
             head1 = getNewHeadNode();
             nodeids[ni] = head1;
+            addNode(head1, ni); // we include this node itself
         }else head1 = nodeids[ni];
         if(nodeids.count(nj)==0){
             head2 = getNewHeadNode();
             nodeids[nj] = head2;
+            addNode(head2, nj); // we include this node itself
         }else head2 = nodeids[nj];
         addNode(head1, nj);
         addNode(head2, ni);
@@ -77,26 +79,40 @@ int main (int argc, char const *argv[]){
         keystone = (*it).first;
         head = (*it).second;
         n_i = head->next;
-        head_i = nodeids[n_i->nodeId];
         while(n_i && n_i->next) { // neighbors of keystone in the linkedlist
+            if (n_i->nodeId == keystone){
+                cout << "n_i->nodeId == keystone" << endl;
+                n_i = n_i->next;
+                continue;
+            }
+            head_i = nodeids[n_i->nodeId];
             n_j = n_i->next;
             while(n_j) { // next neighbors of n_k
                 head_j = nodeids[n_j->nodeId];
+                if (n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId){
+                    cout << "n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId" << endl;
+                    n_j = n_j->next;
+                    continue;
+                }
+                //cout << keystone << ": " << n_i->nodeId << " " << n_j->nodeId  << " | "
+                //        <<head_i->size << " " << head_j->size << " || " ;
                 if(storedSimilarityHashTable.count(make_pair(n_i->nodeId, n_j->nodeId))){
                     curr_jacc = storedSimilarityHashTable[make_pair(n_i->nodeId, n_j->nodeId)];
                 }else{
                     len_int = getCommonNodesCount(head_i, head_j);    // my set intersection function
+                    //cout << len_int << ", ";
                     curr_jacc = (double) len_int / (double)( head_i->size  + head_j->size - len_int);
                     storedSimilarityHashTable[make_pair(n_i->nodeId, n_j->nodeId)] = curr_jacc;
                 }
-                if (keystone < n_j->nodeId && keystone < n_j->nodeId){
-                    fprintf( jaccFile, "%i\t%i\t%i\t%i\t%f\n", keystone, n_i->nodeId, keystone, n_j->nodeId, curr_jacc );
-                } else if (keystone < n_j->nodeId && keystone > n_j->nodeId){
-                    fprintf( jaccFile, "%i\t%i\t%i\t%i\t%f\n", keystone, n_i->nodeId, n_j->nodeId, keystone, curr_jacc );
-                } else if (keystone > n_j->nodeId && keystone < n_j->nodeId){
-                    fprintf( jaccFile, "%i\t%i\t%i\t%i\t%f\n", n_i->nodeId, keystone, keystone, n_j->nodeId, curr_jacc );
+                //cout << curr_jacc << endl;
+                if (keystone < n_i->nodeId && keystone < n_j->nodeId){
+                    fprintf( jaccFile, "%lld\t%lld\t%lld\t%lld\t%.6f\n", keystone, n_i->nodeId, keystone, n_j->nodeId, curr_jacc );
+                } else if (keystone < n_i->nodeId && keystone > n_j->nodeId){
+                    fprintf( jaccFile, "%lld\t%lld\t%lld\t%lld\t%.6f\n", keystone, n_i->nodeId, n_j->nodeId, keystone, curr_jacc );
+                } else if (keystone > n_i->nodeId && keystone < n_j->nodeId){
+                    fprintf( jaccFile, "%lld\t%lld\t%lld\t%lld\t%.6f\n", n_i->nodeId, keystone, keystone, n_j->nodeId, curr_jacc );
                 } else {
-                    fprintf( jaccFile, "%i\t%i\t%i\t%i\t%f\n", n_i->nodeId, keystone, n_j->nodeId, keystone, curr_jacc );
+                    fprintf( jaccFile, "%lld\t%lld\t%lld\t%lld\t%.6f\n", n_i->nodeId, keystone, n_j->nodeId, keystone, curr_jacc );
                 }
                 n_j = n_j->next;
             }
@@ -110,5 +126,3 @@ int main (int argc, char const *argv[]){
     }
     return 0;
 }
-
-
