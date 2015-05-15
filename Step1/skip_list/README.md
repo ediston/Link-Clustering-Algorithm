@@ -11,7 +11,7 @@ Implementation Details:<br>
 Linked List Implementation<br>
 1.Create map< pair < long,long > , double> storedSimilarityHashTable<br>
 2.Create a map < long long, node* > nodeids <br>
-3.First linked list node structure.<br>
+3.First skip list node structure.<br>
   struct node{<br>
     long long nodeid;<br>
     node* next;<br>
