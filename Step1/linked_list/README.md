@@ -1,6 +1,6 @@
 Linked List
 
-Why we doing this?
+Why we doing this?<br>
 1. To check if it impacts complexity (space and time)
 
 2. Will help in deciding hardware architecture 
