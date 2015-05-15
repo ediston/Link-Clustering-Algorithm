@@ -4,7 +4,7 @@ Why we doing this?<br>
 2. Will help in deciding hardware architecture<br>
 
 Implementation Details:<br>
-1. LinkedList.h and LinkedList.cpp contains the linked list implementation<br>
+1. LinkedList.h contains the linked list implementation<br>
 2. calcSimilarityLL.cpp is the dirving file<br>
 
  
