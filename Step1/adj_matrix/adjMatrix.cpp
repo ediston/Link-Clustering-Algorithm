@@ -10,9 +10,9 @@
 
 using namespace std;
 long long totalComparisons;
-long long N, total;
+long long N;
+double total;
 bool** adjMatrix;
-
 void intMatrix(){
     adjMatrix = new bool *[N];
     for(long i=0; i<N; i++){
@@ -20,6 +20,7 @@ void intMatrix(){
         for(long j=0; j<N; j++){
             adjMatrix[i][j] = 0;
         }
+        adjMatrix[i][i] = 1;
     }
 }
 
@@ -28,8 +29,9 @@ long long getCommonNodesCount(long long ni, long long nj){
     total = 0;
     for(long long i=0; i<N; i++){
         totalComparisons++;
-        count  += (long long)(adjMatrix[ni][i]&adjMatrix[nj][i]);
-        total  += (long long)adjMatrix[ni][i] + (long long)adjMatrix[nj][i];
+        count  += (long long)(adjMatrix[ni][i] && adjMatrix[nj][i]);
+        if(adjMatrix[ni][i]) total++;
+        if(adjMatrix[nj][i]) total++;
     }
     return count;
 }
@@ -38,8 +40,7 @@ void deleteLL(){
     for(long long i=0; i<N; i++)
         free(adjMatrix[i]);
 }
-
-map <pair<long long, long>, long long> storedSimilarityHashTable;
+map <pair<long long, long>, double> storedSimilarityHashTable;
 
 int main (int argc, char const *argv[]){
     // make sure args are present:
@@ -67,7 +68,6 @@ int main (int argc, char const *argv[]){
     }
     inFile.close();
     N++;
-    cout << N << endl;
     intMatrix();
     // load edgelist into linkedlists
     
@@ -79,12 +79,7 @@ int main (int argc, char const *argv[]){
     inFile.close();
     
     // end load edgelist
-    for (long i=0; i<N; i++) {
-        if(adjMatrix[17][i]){
-            cout << i << " ";
-        }
-    }
-    cout << endl;
+    //----------------------
     FILE * jaccFile = fopen(argv[2],"w");
     long long keystone, len_int;
     long long n_i, n_j;
@@ -108,7 +103,7 @@ int main (int argc, char const *argv[]){
                     curr_jacc = storedSimilarityHashTable[make_pair(n_i, n_j)];
                 }else{
                     len_int = getCommonNodesCount(n_i, n_j);
-                    curr_jacc = (double) len_int / (double)( total);
+                    curr_jacc = (double) len_int / (total  - (double)len_int );
                     storedSimilarityHashTable[make_pair(n_i, n_j)] = curr_jacc;
                 }
                 if (keystone < n_i && keystone < n_j){
