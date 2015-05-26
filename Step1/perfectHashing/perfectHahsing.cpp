@@ -1,3 +1,8 @@
+/*
+Vivek Dhiman
+TU Kaiserslautern
+vivek4dhiman@gmail.com
+*/
 #include <fstream>
 #include <iostream>
 #include <set>
