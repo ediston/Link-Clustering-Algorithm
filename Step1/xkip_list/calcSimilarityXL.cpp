@@ -12,15 +12,21 @@ int getRandom(){
 struct node{
     int height;
     long long nodeId;
-    node **next;
+    node **nextPrevXor;
 };
 
 struct skipList{
     int height;
     long long listId;
     long long size;
-    node **next;
+    node **nextPrevXor;
 };
+
+/* returns XORed value of the node addresses */
+node* XOR (node *a, node *b)
+{
+    return (node*) ((uintptr_t) (a) ^ (uintptr_t) (b));
+}
 
 node *getNewNode(int height){
     /*
@@ -30,9 +36,9 @@ node *getNewNode(int height){
     node * newnode = new node;
     newnode->height = height;
     newnode->nodeId = 0;
-    newnode->next = new node*[height];
+    newnode->nextPrevXor = new node*[height];
     for(int i=0; i<height; i++)
-        newnode->next[i] = NULL;
+        newnode->nextPrevXor[i] = NULL;
     return newnode;
 }
 
@@ -45,7 +51,7 @@ skipList *getNewSkipList(){
     newSkipList->height = 0;
     newSkipList->next = new node*[MAX_HIEGHT];
     for(int i=0; i<MAX_HIEGHT; i++)
-        newSkipList->next[i] = NULL;
+        newSkipList->nextPrevXor[i] = NULL;
     newSkipList->size = 0;
     return newSkipList;
 }
@@ -54,13 +60,17 @@ void printSkipList(skipList *s){
     if(!s) return;
     cout << "Skiplist #" << s->listId << endl;
     node *current = getNewNode(0);
+    node *prev  = NULL;
+    node *next;
     for(int lvl = s->height-1; lvl>= 0; lvl-- ){
         cout << "Height " << lvl << ": ";
-        current = s->next[lvl];
+        current = s->nextPrevXor[lvl];
         while(current){
             cout  << " - " << current->nodeId << "(" << current->height << ")";
-            current = current->next[lvl];
-        }
+            next = XOR(prev, current->nextPrevXor);
+            prev = current;
+            current = next;
+        }   
         cout << endl;
     }
     cout << endl;
@@ -90,7 +100,8 @@ void addNode(skipList *s, long long newNodeId){
     for(int lvl = s->height-1; lvl>= 0; lvl-- ){
         prev = NULL;
         /// take the first node at this lvl of skip list
-        for(current = s->next[lvl]; current&&current->next[lvl]; current = current->next[lvl]){
+        current = s->nextPrevXor[lvl]; 
+        for(; current&&current->nextPrevXor[lvl]; current = current->nextPrevXor[lvl]){
 			if(current->nodeId > newNodeId){
 				break;
 			}
@@ -102,21 +113,21 @@ void addNode(skipList *s, long long newNodeId){
 		}
         if(current == NULL){
             /// node at this lvl of skip list is empty
-            s->next[lvl] = newNode;
+            s->nextPrevXor[lvl] = newNode;
         }else{
             /// We found at least one node which is current
             if(current->nodeId > newNode->nodeId){
                 if(prev==NULL){
                 /// this means we got to add it at the front of this lvl of the skip list
-                    s->next[lvl] = newNode;
+                    s->nextPrevXor[lvl] = newNode;
                 }else{
-                    prev->next[lvl] = newNode;
+                    prev->nextPrevXor[lvl] = newNode;
                 }
-                newNode->next[lvl] = current;
+                newNode->nextPrevXor[lvl] = current;
             }else{
                 /// so add it at the end
-                newNode->next[lvl] = current->next[lvl];
-                current->next[lvl] = newNode;
+                newNode->nextPrevXor[lvl] = current->nextPrevXor[lvl];
+                current->nextPrevXor[lvl] = newNode;
             }
         }
 	}
@@ -134,8 +145,8 @@ long long getCommonNodesCount(skipList *s1, skipList *s2){
     node *nextn1 = getNewNode(0);
     node *n1 = getNewNode(0);
     node *n2 = getNewNode(0);
-    n1 = s1->next[lvl1];
-    n2 = s2->next[lvl2];
+    n1 = s1->nextPrevXor[lvl1];
+    n2 = s2->nextPrevXor[lvl2];
 
     while(n1 && n2){
         // first let's check if n1 node is bigger than n2
@@ -144,7 +155,7 @@ long long getCommonNodesCount(skipList *s1, skipList *s2){
         totalComparisons++;
         if(n1->nodeId < n2->nodeId){
             // if yes get the next node
-            nextn1 = n1->next[lvl1];
+            nextn1 = n1->nextPrevXor[lvl1];
             // if there is no next_node  or next_nodeis bigger and lvl1 is not 0
             // decrease the level
             if((!nextn1 || nextn1->nodeId > n2->nodeId) && lvl1>0){
@@ -160,7 +171,7 @@ long long getCommonNodesCount(skipList *s1, skipList *s2){
             if(n1->nodeId == n2->nodeId)
                 count++;
             // go to the next node in the second skip list
-            n2 = n2->next[lvl2];
+            n2 = n2->nextPrevXor[lvl2];
             // go to the highest  level of skiplist 1
             // this will reduce the number of comparisons
             lvl1 = n1->height-1;
@@ -170,11 +181,11 @@ long long getCommonNodesCount(skipList *s1, skipList *s2){
 }
 
 void deleteLL(skipList *s){
-    node *ll1node = s->next[0];
-    node *ll2node = s->next[0];
+    node *ll1node = s->nextPrevXor[0];
+    node *ll2node = s->nextPrevXor[0];
     delete s;
     while(ll1node){
-        ll2node = ll1node->next[0];
+        ll2node = ll1node->nextPrevXor[0];
         delete ll1node;
         ll1node = ll2node;
     }
@@ -248,19 +259,19 @@ int main (int argc, char const *argv[]){
     for (it = nodeids.begin(); it != nodeids.end(); it++) { // loop over keys
         keystone = (*it).first;
         s = (*it).second;
-        n_i = s->next[0];
-        while(n_i && n_i->next[0]) { // neighbors of keystone in the linkedlist
+        n_i = s->nextPrevXor[0];
+        while(n_i && n_i->nextPrevXor[0]) { // neighbors of keystone in the linkedlist
             if (n_i->nodeId == keystone){
                 //cout << "n_i->nodeId == keystone" << endl;
-                n_i = n_i->next[0];
+                n_i = n_i->nextPrevXor[0];
                 continue;
             }
             s_i = nodeids[n_i->nodeId];
-            n_j = n_i->next[0];
+            n_j = n_i->nextPrevXor[0];
             while(n_j) { // next neighbors of n_k
                 if (n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId){
                     //out << "n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId" << endl;
-                    n_j = n_j->next[0];
+                    n_j = n_j->nextPrevXor[0];
                     continue;
                 }
                 s_j = nodeids[n_j->nodeId];
@@ -280,9 +291,9 @@ int main (int argc, char const *argv[]){
                 } else {
                     fprintf( jaccFile, "%lld\t%lld\t%lld\t%lld\t%.6f\n", n_i->nodeId, keystone, n_j->nodeId, keystone, curr_jacc );
                 }
-                n_j = n_j->next[0];
+                n_j = n_j->nextPrevXor[0];
             }
-            n_i = n_i->next[0];
+            n_i = n_i->nextPrevXor[0];
         }
     } // done loop over keystones
     fclose(jaccFile);
