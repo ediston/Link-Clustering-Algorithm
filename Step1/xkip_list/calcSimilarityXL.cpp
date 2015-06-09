@@ -76,19 +76,51 @@ void printSkipList(skipList *s){
     cout << endl;
 }
 
+/* Insert a node at the begining of the XORed linked list and make the
+   newly inserted node as head->next*/
+void addNodeToXorList(skipList *head, int lvl, long long newNodeId){
+    if(!head) return;
+    // create a new node
+    node *newNode = getNewNode();
+    if(head->size==0){
+        newNode->nodeId = newNodeId;
+        head->nextPrevXor[lvl] = newNode; 
+        return ;
+    }
+    node *headnode = head->nextPrevXor[lvl];
+    /// if this not the first node then
+    /// next of this node is the current headnode
+    newNode->nextPrevXor = headnode;
+    newNode->nodeId = newNodeId;
+    /// head->nextPrevXor is XOR of NULL and next. So if we do XOR of
+    /// it with NULL, we get next
+    ///node* next = XOR( (headnode->nextPrevXor),  NULL);
+    ///headnode->npx = XOR(new_node, next);
+    headnode->nextPrevXor = XOR(newNode, headnode->nextPrevXor]);
+
+    /// header points to a new node
+    head->nextPrevXor[lvl] = newNode; 
+    /*
+    If we have A->next = B, C->next = B
+    and B->next = Xor(A,C)
+    then we can create C from Xor(A,B->next) and C = (A, B->next)
+    so we need only A to get B,C. Because B = Xor(A, A->next);
+    */
+}
+
 void addNode(skipList *s, long long newNodeId){
     // first we decide the height of the new node
     // height = level+1
     int level = 0;
 
-	for(;getRandom() >= 1 ; level++) {
+    for(;getRandom() >= 1 ; level++) {
         if(level+1 > s->height || level==MAX_HIEGHT-1) {
             break;
         }
-	}
-	if(level+1 > s->height)  s->height = level+1;
+    }
+    if(level+1 > s->height)  s->height = level+1;
 
-	node *prev = getNewNode(0);
+    node *prev = getNewNode(0);
     node *current = getNewNode(0);
     node *newNode = getNewNode(level+1);
     prev = NULL;
@@ -99,39 +131,11 @@ void addNode(skipList *s, long long newNodeId){
     /// and then we insert the new node there
     for(int lvl = s->height-1; lvl>= 0; lvl-- ){
         prev = NULL;
+        if(lvl > level ) continue;
         /// take the first node at this lvl of skip list
-        current = s->nextPrevXor[lvl]; 
-        for(; current&&current->nextPrevXor[lvl]; current = current->nextPrevXor[lvl]){
-			if(current->nodeId > newNodeId){
-				break;
-			}
-			prev = current;
-		}
-		if(lvl > level ){
-            //if the level is greater than the new node's level move on
-			continue;
-		}
-        if(current == NULL){
-            /// node at this lvl of skip list is empty
-            s->nextPrevXor[lvl] = newNode;
-        }else{
-            /// We found at least one node which is current
-            if(current->nodeId > newNode->nodeId){
-                if(prev==NULL){
-                /// this means we got to add it at the front of this lvl of the skip list
-                    s->nextPrevXor[lvl] = newNode;
-                }else{
-                    prev->nextPrevXor[lvl] = newNode;
-                }
-                newNode->nextPrevXor[lvl] = current;
-            }else{
-                /// so add it at the end
-                newNode->nextPrevXor[lvl] = current->nextPrevXor[lvl];
-                current->nextPrevXor[lvl] = newNode;
-            }
-        }
-	}
-	// increase the size of the skip list
+        addNodeToXorList(s, lvl, newNodeId);
+    }
+    // increase the size of the skip list
     s->size++;
 }
 
