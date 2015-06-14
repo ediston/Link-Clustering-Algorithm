@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <set>
 #include <vector>
-#include "../mainHeader.h"
 #include <algorithm> // for swap
 using namespace std;
 
@@ -75,8 +74,6 @@ int intersection_size( const set<int> &A, const set<int> &B ) {
 }
 
 int main (int argc, char const *argv[]){
-	clock_t begin_time = clock();
-	recordTime("\n----------------\nStarting calculating jaccs  at: ");
   // make sure args are present:
   if (!argv[1]){
     cerr << "ERROR: no input file specified" << endl;
@@ -155,6 +152,5 @@ int main (int argc, char const *argv[]){
   } // done loop over keystones
   fclose(jaccFile);
   delete [] neighbors; // all done, clean up memory...
-  recordUsage(begin_time);
   return 0;
 }
