@@ -1,54 +1,7 @@
-// calcAndWrite_Jaccards.cpp
-// Jim Bagrow
-// Last Modified: 2008-12-30
-
-/*
-Copyright 2008,2009,2010 James Bagrow
-
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-				    // USAGE:
-				    //      g++ -O3 -o calc calcAndWrite_Jaccards.cpp
-				    //      ./calc network.pairs network.jaccs
-				    //
-				    //  -- network.pairs is an integer edgelist (one edge, two nodes
-				    //  per line)
-				    //  -- network.jaccs will contain the jaccard coefficient for each
-				    //  pair of edges compared, of the form:
-				    //      i_0 i_1 j_0 j_1 jaccard<newline>
-				    //      ...
-				    //  for edges (i_0,i_1) and (j_0,j_1)
-
-
-				    // same as calcAndWrite_Jaccards.cpp, but without the graph code...
-				    // but not much quicker (:-()
-
-				    // all this does is calculate the jaccard for "each" edge pair and
-				    // write it to a file.  Two make this into real code will take some
-				    // more work (the next step can be the hierarchical clustering over
-				    // the output jacc file...)
-
-				    // CORRECTNESS:
-				    //  Returns same jaccard file as calcAndWrite_Jaccards.cpp, as shown
-				    //  by compareTwoJaccs.py...
-
 #include <fstream>
 #include <iostream>
 #include <set>
+#include <ctime>
 #include <vector>
 #include <algorithm> // for swap
 using namespace std;
@@ -74,6 +27,7 @@ int intersection_size( const set<int> &A, const set<int> &B ) {
 }
 
 int main (int argc, char const *argv[]){
+    clock_t begin = clock();
   // make sure args are present:
   if (!argv[1]){
     cerr << "ERROR: no input file specified" << endl;
@@ -152,5 +106,6 @@ int main (int argc, char const *argv[]){
   } // done loop over keystones
   fclose(jaccFile);
   delete [] neighbors; // all done, clean up memory...
+  cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
   return 0;
 }

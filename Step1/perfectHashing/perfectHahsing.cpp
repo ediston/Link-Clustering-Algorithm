@@ -3,6 +3,7 @@ Vivek Dhiman
 TU Kaiserslautern
 vivek4dhiman@gmail.com
 */
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <set>
@@ -44,6 +45,7 @@ int intersection_size(  long long a, long long b) {
 }
 
 int main (int argc, char const *argv[]){
+    clock_t begin = clock();
     // make sure args are present:
     if (!argv[1]){
         cerr << "ERROR: no input file specified" << endl;
@@ -126,7 +128,7 @@ int main (int argc, char const *argv[]){
     fclose(jaccFile);
     cout << "Total Comparisons = " << totalComparisons << endl;
     delete [] neighbors; // all done, clean up memory...
-
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     return 0;
 }
 

@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <cstdint>
+#include <ctime>
 using namespace std;
 long long totalComparisons;
 
@@ -174,6 +175,7 @@ map<pair <long long, long long>, double> storedSimilarityHashTable;
 
 
 int main (int argc, char const *argv[]){
+    clock_t begin = clock();
     // make sure args are present:
     if (!argv[1]){
         cerr << "ERROR: no input file specified" << endl;
@@ -299,5 +301,6 @@ int main (int argc, char const *argv[]){
         head = (*it).second;
         deleteLL(head);
     }
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     return 0;
 }

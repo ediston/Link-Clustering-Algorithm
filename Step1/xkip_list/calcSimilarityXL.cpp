@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <ctime>
 using namespace std;
 #define MAX_HIEGHT 32
 #define ONEIN 2
@@ -204,7 +205,8 @@ map<pair <long, long>, double> storedSimilarityHashTable;
 
 
 int main (int argc, char const *argv[]){
-     srand (time(NULL));
+    clock_t begin = clock();
+    srand (time(NULL));
     // make sure args are present:
     if (!argv[1]){
         cerr << "ERROR: no input file specified" << endl;
@@ -312,5 +314,6 @@ int main (int argc, char const *argv[]){
         s = (*it).second;
         deleteLL(s);
     }
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     return 0;
 }

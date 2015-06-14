@@ -3,7 +3,7 @@ Vivek Dhiman
 TU KL
 vivek4dhiman@gmail.com
 */
-
+#include <ctime>
 #include <bits/stdc++.h>
 #define MAX_ELEMENTS_IN_A_NODE 10
 using namespace std;
@@ -187,6 +187,7 @@ map<pair <long, long>, double> storedSimilarityHashTable;
 
 
 int main (int argc, char const *argv[]){
+    clock_t begin = clock();
     // make sure args are present:
     if (!argv[1]){
         cerr << "ERROR: no input file specified" << endl;
@@ -299,5 +300,6 @@ int main (int argc, char const *argv[]){
         head = (*it).second;
         deleteUL(head);
     }
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     return 0;
 }
