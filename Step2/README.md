@@ -1,9 +1,9 @@
 <h1>Create an edge_id file and replace edges with edge ids in jaccs file</h1>
-<h2>Why?</h2></br>
+<h2>Why?</h2>
 1. We have smaller rum-time memory.</br>
 2. Also smaller storage is required</br></br>
 
-<h2>How?</h2></br>
+<h2>How?</h2>
 Steps:</br>
 1. Go through the .jaccs file</br>
 2. Read in a new line, edge edge jacc
