@@ -17,7 +17,7 @@
 
 // CORRECTNESS:
 //  Returns same jaccard file as calcAndWrite_Jaccards.cpp, provided by the origina authors.
-#include<linkedlist.h>
+#include "linkedlist.h"
 #include <ctime>
 map<long long, headNode*> nodeids;
 map<long long, headNode*> :: iterator it;
@@ -82,7 +82,7 @@ int main (int argc, char const *argv[]){
         n_i = head->next;
         while(n_i && n_i->next) { // neighbors of keystone in the linkedlist
             if (n_i->nodeId == keystone){
-                cout << "n_i->nodeId == keystone" << endl;
+                //cout << "n_i->nodeId == keystone" << endl;
                 n_i = n_i->next;
                 continue;
             }
@@ -91,7 +91,7 @@ int main (int argc, char const *argv[]){
             while(n_j) { // next neighbors of n_k
                 head_j = nodeids[n_j->nodeId];
                 if (n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId){
-                    cout << "n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId" << endl;
+                    //cout << "n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId" << endl;
                     n_j = n_j->next;
                     continue;
                 }
@@ -125,6 +125,6 @@ int main (int argc, char const *argv[]){
         head = (*it).second;
         deleteLL(head);
     }
-    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC  << " seconds. "<< endl;
     return 0;
 }

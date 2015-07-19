@@ -7,7 +7,7 @@ vivek4dhiman@gmail.com
 #include <bits/stdc++.h>
 #define MAX_ELEMENTS_IN_A_NODE 10
 using namespace std;
-long long totalComparisons;
+//long long totalComparisons;
 
 set<long long> :: iterator listIt;
 struct node{
@@ -132,7 +132,7 @@ long long getCommonNodesCount(unrolledList *head1, unrolledList *head2){
     if(ll1node) it_i = ll1node->elems.begin();
     if(ll2node) it_j = ll2node->elems.begin();
     while(ll1node && ll2node){
-        totalComparisons++;
+        //totalComparisons++;
         n_i = *(it_i);
         n_j = *(it_j);
         if(n_i < n_j){
@@ -237,7 +237,7 @@ int main (int argc, char const *argv[]){
     // iterate through the map of nodeIds
 
     // do the gosh darn calculation, fool!
-    totalComparisons = 0;
+    //totalComparisons = 0;
     FILE * jaccFile = fopen(argv[2],"w");
     set<long long> :: iterator it_i, it_j;
     long long keystone, len_int;
@@ -295,7 +295,7 @@ int main (int argc, char const *argv[]){
         }
     } // done loop over keystones
     fclose(jaccFile);
-    cout << "Total comparisons are: " << totalComparisons << endl;
+    //cout << "Total comparisons are: " << totalComparisons << endl;
     for (it = nodeids.begin(); it != nodeids.end(); it++) { // loop over keys
         head = (*it).second;
         deleteUL(head);

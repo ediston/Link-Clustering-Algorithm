@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <ctime>
 using namespace std;
-long long totalComparisons;
+//long long totalComparisons;
 
 struct node{
     long long nodeId;
@@ -129,7 +129,7 @@ long long getCommonNodesCount(xorListHeadNode *head1, xorListHeadNode *head2){
     bool move1, move2;
     while(currNode1 && currNode2){
         move1 = false, move2 = false;
-        totalComparisons++;
+        //totalComparisons++;
         //cout << "\t\t"<< currNode1->nodeId << " ? " << currNode1->nodeId << endl;
         if(currNode1->nodeId < currNode2->nodeId){
             move1 = true;
@@ -296,7 +296,7 @@ int main (int argc, char const *argv[]){
         }
     } // done loop over keystones
     fclose(jaccFile);
-    cout << "Total comparisons are: " << totalComparisons << endl;
+    //cout << "Total comparisons are: " << totalComparisons << endl;
     for (it = nodeids.begin(); it != nodeids.end(); it++) { // loop over keys
         head = (*it).second;
         deleteLL(head);

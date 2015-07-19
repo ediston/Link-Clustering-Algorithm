@@ -39,7 +39,7 @@ int intersection_size(  long long a, long long b) {
             ++num;
         }
         ++As;
-        totalComparisons++;
+        //totalComparisons++;
     }
     return num;
 }
@@ -126,7 +126,7 @@ int main (int argc, char const *argv[]){
         }
     } // done loop over keystones
     fclose(jaccFile);
-    cout << "Total Comparisons = " << totalComparisons << endl;
+    //cout << "Total Comparisons = " << totalComparisons << endl;
     delete [] neighbors; // all done, clean up memory...
     cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     return 0;

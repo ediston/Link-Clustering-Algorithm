@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
+#include <ctime>
 using namespace std;
-long long totalComparisons;
+//long long totalComparisons;
 long long commonNodeCount;
 struct node{
     long long nodeId;
@@ -31,7 +32,7 @@ bst *getNewBST(){
 void printTree(node *root){
     if(!root) return;
     printTree(root->left);
-    cout << root->nodeId << " ";
+    //cout << root->nodeId << " ";
     printTree(root->right);
 }
 
@@ -75,7 +76,7 @@ void addNodeToTree(bst *head, long long newNodeId){
 
 bool searchNode(node* root, long long nodeID){
     if(!root) return false;
-    totalComparisons++;
+    //totalComparisons++;
     if(root->nodeId == nodeID) return true;
     if(nodeID < root->nodeId)  return searchNode(root->left, nodeID) ;
     else return searchNode(root->right, nodeID);
@@ -157,6 +158,7 @@ void createSimilarityOrder(node *root, long long nodeid){
 }
 
 int main (int argc, char const *argv[]){
+    clock_t begin = clock();
     // make sure args are present:
     if (!argv[1]){
         cerr << "ERROR: no input file specified" << endl;
@@ -196,7 +198,6 @@ int main (int argc, char const *argv[]){
     inFile.close();
 
     // end load edgelist
-    printBST(bsts[17]);
     //return 0;
     // iterate through the map of nodeIds
 
@@ -210,10 +211,11 @@ int main (int argc, char const *argv[]){
         createSimilarityOrder(head->root, keystone);
     }
     fclose(jaccFile);
-    cout << "Total comparisons are: " << totalComparisons << endl;
+    //cout << "Total comparisons are: " << totalComparisons << endl;
     for (it = bsts.begin(); it != bsts.end(); it++) { // loop over keys
         head = (*it).second;
         deleteBST(head);
     }
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     return 0;
 }

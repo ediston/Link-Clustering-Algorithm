@@ -4,7 +4,7 @@ using namespace std;
 #define MAX_HIEGHT 32
 #define ONEIN 2
 
-long long totalComparisons;
+//long long totalComparisons;
 
 int getRandom(){
      return rand() % ONEIN;
@@ -142,7 +142,7 @@ long long getCommonNodesCount(skipList *s1, skipList *s2){
         // first let's check if n1 node is bigger than n2
         //printf("%lld(%d), %lld(%d)\n",  n1->nodeId, lvl1,  n2->nodeId, lvl2);
         //cout <<  n1->nodeId << "," <<  n2->nodeId << endl;
-        totalComparisons++;
+        //totalComparisons++;
         if(n1->nodeId < n2->nodeId){
             // if yes get the next node
             nextn1 = n1->next[lvl1];
@@ -240,7 +240,7 @@ int main (int argc, char const *argv[]){
     // iterate through the map of nodeIds
 
     // do the gosh darn calculation, fool!
-    totalComparisons = 0;
+    ///totalComparisons = 0;
     FILE * jaccFile = fopen(argv[2],"w");
     long long keystone, len_int;
     skipList *s, *s_i, *s_j;
@@ -289,7 +289,7 @@ int main (int argc, char const *argv[]){
         }
     } // done loop over keystones
     fclose(jaccFile);
-    cout << "Total comparisons are: " << totalComparisons << endl;
+    //cout << "Total comparisons are: " << totalComparisons << endl;
     for (it = nodeids.begin(); it != nodeids.end(); it++) { // loop over keys
         s = (*it).second;
         deleteLL(s);
