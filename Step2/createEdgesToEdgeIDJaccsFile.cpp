@@ -65,7 +65,11 @@ int main (int argc, char const *argv[]){
     while ( jaccFile >> i0 >> i1 >> j0 >> j1 >> jacc ) {
         if (i0 >= i1) swap(i0,i1);  
         if (j0 >= j1) swap(j0,j1);  
-        
+         
+        if(edgeIdMap.count(make_pair(i0,i1) ) == 0){
+            cout << "Not found: " << i0 << "," << i1 << endl;
+            continue;
+        } 
         edgeId1 = edgeIdMap[ make_pair(i0,i1) ];
         edgeId2 = edgeIdMap[ make_pair(j0,j1) ];
         fprintf( newnetworkFile, "%ld %ld %f\n", edgeId1, edgeId2, jacc);
