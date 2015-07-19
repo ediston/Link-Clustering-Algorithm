@@ -45,7 +45,7 @@ int main (int argc, char const *argv[]){
     //while (inFile >> ni >> nj >> wij){ // scan edgelist to populate WEIGHTED
         if (ni >= nj) swap(ni,nj); // undirected!
         edgeIdMap[make_pair(ni,nj)] = edgeId;
-        fprintf( networkEdgeIdMapFile, "%ll %ll %ll\n", ni, nj,  edgeId);
+        fprintf( networkEdgeIdMapFile, "%ld %ld %ld\n", ni, nj,  edgeId);
         edgeId++;
     }
     fclose(networkEdgeIdMapFile);
@@ -68,7 +68,7 @@ int main (int argc, char const *argv[]){
         
         edgeId1 = edgeIdMap[ make_pair(i0,i1) ];
         edgeId2 = edgeIdMap[ make_pair(j0,j1) ];
-        fprintf( newnetworkFile, "%ll %ll %d\n", edgeId1, edgeId2, jacc);
+        fprintf( newnetworkFile, "%ld %ld %d\n", edgeId1, edgeId2, jacc);
     }
     fclose(newnetworkFile);
     //************* done looping over jaccards file
