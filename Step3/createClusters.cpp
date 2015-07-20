@@ -72,8 +72,8 @@ int main (int argc, char const *argv[]){
     }
     int edgeId1,edgeId2; double jacc;
     int idx_i, idx_j;
-    map< int, set<pair<int,int> > >::iterator iter_i,iter_j;
-    set<pair<int,int> >::iterator iterS;
+    map< int, set<int > >::iterator iter_i,iter_j;
+    set<int>::iterator iterS;
     while ( jaccFile >> edgeId1 >> edgeId2 >> jacc ) {
         if ( jacc >= threshold ) { 
             
