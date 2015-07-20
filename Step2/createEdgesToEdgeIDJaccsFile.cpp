@@ -26,7 +26,7 @@ int main (int argc, char const *argv[]){
         exit(1);
     } 
     //************* got the args
-    
+    clock_t begin = clock();
     
     //************* start load edgelist
     ifstream inFile;
@@ -80,6 +80,6 @@ int main (int argc, char const *argv[]){
     
     //************* write the clusters to file:
     jaccFile.close();
-    
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC  << " seconds. "<< endl;
     return 0;
 }
