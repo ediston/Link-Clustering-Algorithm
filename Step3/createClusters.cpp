@@ -1,5 +1,5 @@
 /*
-//  $ g++ -O3 -o cluster clusterJaccsFile.cpp
+//  $ g++ -O3 -o cluster createClusters.cpp
 //  $ ./cluster network.pairs network.jaccs network.clusters threshold
 //   
 //     -- network.pairs is an integer edgelist (one edge, two nodes
