@@ -15,7 +15,7 @@ using namespace std;
 
 int main (int argc, char const *argv[]){
     //************* make sure args are present:
-    if (argc != 5){
+    if (argc != 3){
         cout << "ERROR: something wrong with the inputs" << endl;
         cout << "usage:\n    " << argv[0] << " networkEdgeIdMap.csv network.clusters newnetwork.clusters" << endl;
         exit(1);
