@@ -1,12 +1,15 @@
 /*
 By Vivek Dhiman
-1. Create two files
-    1.1. For storing the new jaccs with id id jaccs, call edgeIdsJacc.jaccs
-    1.2. For storing the mapping, edgeIDMapFile.csv
+. Create two files
+ 1.1. For storing the new jaccs with id id jaccs,  edgeIdsJacc.jaccs
+ 1.2. For storing the mapping, edgeIDMapFile.csv
 2. Open the jaccs file
 3. Read in the next line
 4. If both edges exist in the map, just write id id jaccs to edgeIdsJacc.jaccs
 5. Else whichever edge doesn't exist in the map, add it to map and increment the edge id by1
+6. Usage:
+ a.Compile: $ g++ -O3 -o createEdgesToEdgeID createEdgesToEdgeIDJaccsFile.cpp
+     b.Run:     $ ./createEdgesToEdgeID network.pairs network.jaccs networkEdgeIdMap.csv newnetwork.jaccs 
 */
 
 #include <cstdlib>
