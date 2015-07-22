@@ -74,8 +74,9 @@ int main (int argc, char const *argv[]){
             continue;
         } 
         edgeId1 = edgeIdMap[ make_pair(i0,i1) ];
-        edgeId2 = edgeIdMap[ make_pair(j0,j1) ];
-        fprintf( newnetworkFile, "%ld %ld %f\n", edgeId1, edgeId2, jacc);
+        edgeId2 = edgeIdMap[ make_pair(j0,j1) ]; 
+        // storing everything on the same line, reduces memory usage
+        fprintf( newnetworkFile, "%ld %ld %f ", edgeId1, edgeId2, jacc);
     }
     fclose(newnetworkFile);
     //************* done looping over jaccards file
