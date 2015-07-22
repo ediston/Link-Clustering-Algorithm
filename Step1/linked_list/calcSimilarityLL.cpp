@@ -19,12 +19,14 @@
 //  Returns same jaccard file as calcAndWrite_Jaccards.cpp, provided by the origina authors.
 #include "linkedlist.h"
 #include <ctime>
+#include <algorithm>
 map<long long, headNode*> nodeids;
 map<long long, headNode*> :: iterator it;
 map<pair <long, long>, double> storedSimilarityHashTable;
 
 
 int main (int argc, char const *argv[]){
+    double minJaccs = 223232, maxJaccs = -1;
     clock_t begin = clock();
     // make sure args are present:
     if (!argv[1]){
@@ -105,6 +107,8 @@ int main (int argc, char const *argv[]){
                     curr_jacc = (double) len_int / (double)( head_i->size  + head_j->size - len_int);
                     storedSimilarityHashTable[make_pair(n_i->nodeId, n_j->nodeId)] = curr_jacc;
                 }
+                minJaccs = min(minJaccs, curr_jacc);
+                maxJaccs = max(maxJaccs, curr_jacc);
                 //cout << curr_jacc << endl;
                 if (keystone < n_i->nodeId && keystone < n_j->nodeId){
                     fprintf( jaccFile, "%lld\t%lld\t%lld\t%lld\t%.6f\n", keystone, n_i->nodeId, keystone, n_j->nodeId, curr_jacc );
@@ -125,6 +129,8 @@ int main (int argc, char const *argv[]){
         head = (*it).second;
         deleteLL(head);
     }
+    cout << "minJaccs = " << minJaccs << endl;
+    cout << "maxJaccs = " << maxJaccs << endl;
     cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC  << " seconds. "<< endl;
     return 0;
 }
