@@ -2,6 +2,7 @@
 //  $ g++ -O3 -o calcDensityForDiffThresh calcDensityForDiffThresh.cpp
 //  $ ./calcDensityForDiffThresh network.pairs network.jaccs threshDensity.csv
 */
+#include <math.h> 
 #include <ctime>
 #include <cstdlib>
 #include <fstream>
@@ -115,7 +116,7 @@ int main (int argc, char const *argv[]){
             }
         }  
         D = 2.0 * wSum / M;
-        if (D == -inf){
+        if (isinf(D)){
             fprintf( threshDensityFile, "\nERROR: D == -inf \n\n"); 
             fclose(threshDensityFile);
             exit(1);
