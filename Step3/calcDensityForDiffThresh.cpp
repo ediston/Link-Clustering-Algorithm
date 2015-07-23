@@ -1,20 +1,6 @@
 /*
-//  $ g++ -O3 -o cluster createClusters.cpp
-//  $ ./cluster network.pairs network.jaccs network.clusters threshold
-//   
-//     -- network.pairs is an integer edgelist (one edge, two nodes
-//     per line)
-//     
-//     -- network.jaccs contains network.jaccs the jaccard 
-//     coefficient for each pair of edges compared, of the form:
-//         i_0 i_1 j_0 j_1 jaccard<newline>
-//         ...
-//     for edges (i_0,i_1) and (j_0,j_1), etc.
-//     
-//     -- network.clusters will contain one cluster of edges per line 
-//     (edge nodes are comma-separated and edges are space-separated)
-//     
-//     --threshold is the [0,1] threshold for the clustering
+//  $ g++ -O3 -o calcDensityForDiffThresh calcDensityForDiffThresh.cpp
+//  $ ./calcDensityForDiffThresh network.pairs network.jaccs threshDensity.csv
 */
 #include <ctime>
 #include <cstdlib>
