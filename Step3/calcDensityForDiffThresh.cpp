@@ -56,7 +56,7 @@ int main (int argc, char const *argv[]){
     }
     int edgeId1,edgeId2; double jacc; 
     while ( jaccFile >> edgeId1 >> edgeId2 >> jacc ) {
-        thresholdSet.insert(jacc)
+        thresholdSet.insert(jacc);
     }
     jaccFile.close();
     FILE * threshDensityFile = fopen( argv[3], "w" ); 
