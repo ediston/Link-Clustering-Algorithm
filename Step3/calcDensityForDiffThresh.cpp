@@ -15,7 +15,7 @@ using namespace std;
 
 int main (int argc, char const *argv[]){
     //************* make sure args are present:
-    if (argc != 6){
+    if (argc != 4){
         cout << "ERROR: something wrong with the inputs" << endl;
         cout << "usage:\n    " << argv[0] << " network.pairs network.jaccs threshDensity.csv" << endl;
         exit(1);
