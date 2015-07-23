@@ -59,6 +59,8 @@ int main (int argc, char const *argv[]){
         thresholdSet.insert(jacc);
     }
     jaccFile.close();
+    map< int, set<int > >::iterator iter_i,iter_j;
+    set<int>::iterator iterS;
     FILE * threshDensityFile = fopen( argv[3], "w" ); 
     fprintf( threshDensityFile, "%.6f %.6f " );
     for(thIt = thresholdSet.rbegin(); thIt!=thresholdSet.rend(); thIt++){
