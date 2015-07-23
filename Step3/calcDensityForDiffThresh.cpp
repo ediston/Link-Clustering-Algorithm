@@ -46,6 +46,7 @@ int main (int argc, char const *argv[]){
         index++;
     }
     inFile.close(); inFile.clear();
+    cout << "There were " << index2cluster.size() << " clusters." << endl;
     //************* end load edgelist
     
     //************* loop over jaccards file and do the clustering
@@ -60,6 +61,7 @@ int main (int argc, char const *argv[]){
         thresholdSet.insert(jacc);
     }
     jaccFile.close();
+    cout << "Done with thresholdSet creation." << endl;
     map< int, set<int > >::iterator iter_i,iter_j;
     set<int>::iterator iterS;
     FILE * threshDensityFile = fopen( argv[3], "w" ); 
@@ -90,9 +92,7 @@ int main (int argc, char const *argv[]){
                 } 
             } // done merging clusters i and j
         }
-        //************* write the clusters to file:
         jaccFile.close();
-        cout << "There were " << index2cluster.size() << " clusters at threshold " << threshold << "." << endl;
         
         // all done clustering, write to file (and calculated partition density):
         set<int> clusterNodes;
