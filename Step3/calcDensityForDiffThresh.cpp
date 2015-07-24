@@ -115,6 +115,9 @@ int main (int argc, char const *argv[]){
     FILE * threshDensityFile = fopen( argv[3], "w" ); 
     fclose(threshDensityFile);
     fprintf( threshDensityFile, "thresh  D\n" );
+    long long done = 0;
+    float percDone = 0.01;
+    clock_t lastBegin = clock(); 
     for(thIt = thresholdSet.rbegin(); thIt!=thresholdSet.rend(); thIt++){
         threshold = *thIt;
         if (threshold < 0.0 || threshold > 1.0){
@@ -139,8 +142,7 @@ int main (int argc, char const *argv[]){
                 // delete cluster j:
                 index2cluster.erase(iter_j);
             }
-        }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );
-        
+        }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );        
         // all done clustering, write to file (and calculated partition density):
         M = 0, Mns = 0;
         wSum = 0.0;
@@ -170,12 +172,19 @@ int main (int argc, char const *argv[]){
             exit(1);
         }
         //*************
-        fprintf( threshDensityFile, "%.6f %.6f ", threshold, D);
+        fprintf( threshDensityFile, "%.6f %.6f \n", threshold, D);
         fclose(threshDensityFile);
         if(D > highestD){
             highestD = D;
             highestDThr = threshold;
         } 
+        done++;
+        if((float)done/(float)thresholdSet.size() >= percDone){
+            cout << percDone*100 << " pc done.\n" << endl;
+            percDone += 0.01;
+        }
+        cout << "Time taken = " << double(clock() - lastBegin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
+        lastBegin = clock();
     }
     jaccFile.close(); jaccFile.clear();
     fprintf( threshDensityFile, "\n highest D=%.6f at thresh:%.6f.\n", highestD, highestDThr);
