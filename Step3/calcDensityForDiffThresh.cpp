@@ -1,7 +1,7 @@
 /*
 1. Treat each edge id as a cluster, unordered map from edgeId to a set
 2. also store size of each cluster which will 0 in the begining
-//  $ g++ -O3 -o calcDensityForDiffThresh calcDensityForDiffThresh.cpp
+//  $ g++ -std=c++0x -O3 -o calcDensityForDiffThresh calcDensityForDiffThresh.cpp
 //  $ ./calcDensityForDiffThresh networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  Nthresholds threshDensity.csv
 */
 #include <math.h> 
