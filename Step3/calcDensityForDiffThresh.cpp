@@ -11,6 +11,7 @@
 #include <map>
 #include <utility>   // for pairs
 #include <algorithm> // for swap
+#define MIN_DIFF_BW_JACCS 0.0001
 using namespace std;
 
 int main (int argc, char const *argv[]){
@@ -37,8 +38,8 @@ int main (int argc, char const *argv[]){
     // index should be iterator not integer????
     set<float> thresholdSet;
     set<float> ::reverse_iterator thIt;
-    map< int,          set<int> > index2cluster; // O(log n) access too slow?
-    map< int, map<int, set<int> >::iterator > edge2iter;
+    map< int,  set<int> > index2cluster; // O(log n) access too slow?
+    map< int,  map<int, set<int> >::iterator > edge2iter;
     int ni, nj, edgeId, index = 0;
     while (inFile >> ni >> nj >> edgeId){ // scan edgelist to populate  
         index2cluster[ index ].insert( edgeId );         // build cluster index to set of edge-pairs map
@@ -56,16 +57,25 @@ int main (int argc, char const *argv[]){
         cout << "ERROR: unable to open jaccards file" << endl;
         exit(1); // terminate with error
     }
-    int edgeId1,edgeId2; double jacc; 
+    
+    int edgeId1,edgeId2; 
+    double jacc, prevJacc = -0.1;
     while ( jaccFile >> edgeId1 >> edgeId2 >> jacc ) {
+        if()
         thresholdSet.insert(jacc);
     }
     jaccFile.close();
     cout << "Done with thresholdSet creation." << endl;
+    //*************
+    // emoty if the file exists
+    FILE * threshDensityFile = fopen( argv[3], "w" );
+    fprintf( threshDensityFile, "threshold D" );
+    fclose(threshDensityFile);
+    //*************
     map< int, set<int > >::iterator iter_i,iter_j;
     set<int>::iterator iterS;
-    FILE * threshDensityFile = fopen( argv[3], "w" ); 
-    fprintf( threshDensityFile, "%.6f %.6f " );
+    
+    
     for(thIt = thresholdSet.rbegin(); thIt!=thresholdSet.rend(); thIt++){
         threshold = *thIt;
         if (threshold < 0.0 || threshold > 1.0){
@@ -116,6 +126,7 @@ int main (int argc, char const *argv[]){
             }
         }  
         D = 2.0 * wSum / M;
+        FILE * threshDensityFile = fopen( argv[3], "a" );
         if (isinf(D)){
             fprintf( threshDensityFile, "\nERROR: D == -inf \n\n"); 
             fclose(threshDensityFile);
@@ -123,11 +134,13 @@ int main (int argc, char const *argv[]){
         }
         //*************
         fprintf( threshDensityFile, "%.6f %.6f ", threshold, D);
+        fclose(threshDensityFile);
         if(D > highestD){
             highestD = D;
             highestDThr = threshold;
         } 
     }
+    FILE * threshDensityFile = fopen( argv[3], "a" );
     fprintf( threshDensityFile, "\n highest D=%.6f at thresh:%.6f.\n", highestD, highestDThr);
     fclose(threshDensityFile);
     cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
