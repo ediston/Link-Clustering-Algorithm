@@ -66,9 +66,9 @@ int main (int argc, char const *argv[]){
     set<pair<float, pair<int, int> > >::reverse_iterator  jaccsEdgeEdgeSetIt;
     for(jaccsEdgeEdgeSetIt = jaccsEdgeEdgeSet.rbegin(); 
             thIt!=jaccsEdgeEdgeSet.rend(); jaccsEdgeEdgeSetIt++){
-      jacc = (*jaccsEdgeEdgeSetIt)->first;
-      edgeId1 = (*jaccsEdgeEdgeSetIt)->second->first; 
-      edgeId2 = (*jaccsEdgeEdgeSetIt)->second->second; 
+      jacc = (*jaccsEdgeEdgeSetIt).first;
+      edgeId1 = (*jaccsEdgeEdgeSetIt).second.first; 
+      edgeId2 = (*jaccsEdgeEdgeSetIt).second.second; 
       // open the file 
       fprintf( sortedNewNWJaccsFile, "%lld %lld %.6f\n", edgeId1, edgeId2, jacc);
       done++;
