@@ -50,8 +50,8 @@ int main (int argc, char const *argv[]){
     // each edge id will be a cluster of it's own in the begining
     // each cluster will be og size 1
     unordered_map< int,  pair<int,int> > idEdgePairMap;
-    unordered_map< int,           set<int > > index2cluster; // O(log n) access too slow?
-    unordered_map< int,           unordered_map< int, set<int > >::iterator > edge2iter;
+    unordered_map< int,  set<int > > index2cluster; // O(log n) access too slow?
+    unordered_map< int,  unordered_map< int, set<int > >::iterator > edge2iter;
     int ni, nj, edgeId, index = 0;
     while (inFile >> ni >> nj >> edgeId){ 
         idEdgePairMap[ edgeId ] = make_pair(ni,nj);
@@ -145,6 +145,7 @@ int main (int argc, char const *argv[]){
         M = 0, Mns = 0;
         wSum = 0.0;
         set< int >::iterator S;
+        set<int> clusterNodes;
         unordered_map< int, set< int > >::iterator it;
         for ( it = index2cluster.begin(); it != index2cluster.end(); it++ ) {
             clusterNodes.clear();
