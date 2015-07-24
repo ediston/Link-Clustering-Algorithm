@@ -15,14 +15,7 @@
 #include <algorithm> // for swap
 using namespace std;
 
-void cluster(unordered_map < int, int> &index2cluster, int edgeId, int newEdgeId){
-    if(index2cluster[edgeId] == edgeId){ 
-        index2cluster[edgeId] = newEdgeId;
-        return;
-    }
-    cluster(index2cluster, index2cluster[edgeId], newEdgeId);
-    index2cluster[edgeId] = newEdgeId;
-}
+ 
 
 int main (int argc, char const *argv[]){
     //************* make sure args are present:
@@ -56,8 +49,8 @@ int main (int argc, char const *argv[]){
     // each edge id will be a cluster of it's own in the begining
     // each cluster will be og size 1
     unordered_map< int,  pair<int,int> > idEdgePairMap;
-    map< int,           set<int > > index2cluster; // O(log n) access too slow?
-    map< int,           map< int, set<int > >::iterator > edge2iter;
+    unordered_map< int,           set<int > > index2cluster; // O(log n) access too slow?
+    unordered_map< int,           unordered_map< int, set<int > >::iterator > edge2iter;
     int ni, nj, edgeId, index = 0;
     while (inFile >> ni >> nj >> edgeId){ 
         idEdgePairMap[ edgeId ] = make_pair(ni,nj);
@@ -116,7 +109,7 @@ int main (int argc, char const *argv[]){
     // read first line
     jaccFile >> edgeId1 >> edgeId2 >> jacc ;
     // open the outputfile
-    map< int, set< int> >::iterator iter_i,iter_j;
+    unordered_map< int, set< int> >::iterator iter_i,iter_j;
     set<int>::iterator iterS;
     FILE * threshDensityFile = fopen( argv[3], "w" ); 
     fclose(threshDensityFile);
@@ -151,7 +144,7 @@ int main (int argc, char const *argv[]){
         M = 0, Mns = 0;
         wSum = 0.0;
         set< int >::iterator S;
-        map< int, set< int > >::iterator it;
+        unordered_map< int, set< int > >::iterator it;
         for ( it = index2cluster.begin(); it != index2cluster.end(); it++ ) {
             clusterNodes.clear();
             for (S = it->second.begin(); S != it->second.end(); S++ ){
