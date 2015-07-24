@@ -1,6 +1,8 @@
 /*
+1. Treat each edge id as a cluster, unordered map from edgeId to a set
+2. also store size of each cluster which will 0 in the begining
 //  $ g++ -O3 -o calcDensityForDiffThresh calcDensityForDiffThresh.cpp
-//  $ ./calcDensityForDiffThresh network.pairs network.jaccs threshDensity.csv
+//  $ ./calcDensityForDiffThresh networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  Nthresholds threshDensity.csv
 */
 #include <math.h> 
 #include <ctime>
@@ -13,15 +15,31 @@
 #include <algorithm> // for swap
 using namespace std;
 
+void cluster(unordered_map < int, int> &index2cluster, int edgeId, int newEdgeId){
+    if(index2cluster[edgeId] == edgeId){ 
+        index2cluster[edgeId] = newEdgeId;
+        return;
+    }
+    cluster(index2cluster, index2cluster[edgeId], newEdgeId);
+    index2cluster[edgeId] = newEdgeId;
+}
+
 int main (int argc, char const *argv[]){
     //************* make sure args are present:
     if (argc != 4){
         cout << "ERROR: something wrong with the inputs" << endl;
-        cout << "usage:\n    " << argv[0] << " network.pairs network.jaccs threshDensity.csv" << endl;
+        cout << "usage:\n    " << argv[0] << " networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  "
+                    << " Nthresholds threshDensity.csv" << endl;
         exit(1);
     }
+    // Nthresholds is the total thresholds user wants us to try
+    int nThresh = atoi(argv[4]);
+    int gapBetweenthresh = 0;
     float threshold = 0;
     float D = 0.0;
+    int mc, nc;
+    int M = 0, Mns = 0;
+    double wSum = 0.0;
     float highestD=0.0;
     float highestDThr = 0.0;
     //************* got the args
@@ -34,78 +52,112 @@ int main (int argc, char const *argv[]){
         cout << "ERROR: unable to open input file" << endl;
         exit(1); // terminate with error
     }
-    // index should be iterator not integer????
-    set<float> thresholdSet;
-    set<float> ::reverse_iterator thIt;
-    map< int,          set<int> > index2cluster; // O(log n) access too slow?
-    map< int, map<int, set<int> >::iterator > edge2iter;
+    // store edge ids in a map
+    // each edge id will be a cluster of it's own in the begining
+    // each cluster will be og size 1
+    unordered_map< int,  pair<int,int> > idEdgePairMap;
+    map< int,           set<int > > index2cluster; // O(log n) access too slow?
+    map< int,           map< int, set<int > >::iterator > edge2iter;
     int ni, nj, edgeId, index = 0;
-    while (inFile >> ni >> nj >> edgeId){ // scan edgelist to populate  
-        index2cluster[ index ].insert( edgeId );         // build cluster index to set of edge-pairs map
-        edge2iter[ edgeId ] = index2cluster.find(index); // build edge pair to cluster iter map ******????
+    while (inFile >> ni >> nj >> edgeId){ 
+        idEdgePairMap[ edgeId ] = make_pair(ni,nj);
+        index2cluster[ index ].insert(edgeId);         // build cluster index to set of edge-pairs map
+        edge2iter[edgeId] = index2cluster.find(index); 
         index++;
     }
     inFile.close(); inFile.clear();
-    cout << "There were " << index2cluster.size() << " clusters." << endl;
-    //************* end load edgelist
+    cout << "There were " << index2cluster.size() << " edges." << endl;
+    /// end reading edge ids ----- 
     
-    //************* loop over jaccards file and do the clustering
-    ifstream jaccFile;  
-    jaccFile.open( argv[2] );
-    if (!jaccFile) {
-        cout << "ERROR: unable to open jaccards file" << endl;
+    //----- ----- ----- ----- 
+    ifstream sortedjaccFile;  
+    sortedjaccFile.open( argv[3] );
+    if (!sortedjaccFile) {
+        cout << "ERROR: unable to open sortedjaccFile file" << endl;
         exit(1); // terminate with error
     }
-    int edgeId1,edgeId2; double jacc; 
-    while ( jaccFile >> edgeId1 >> edgeId2 >> jacc ) {
+    int totalThresh = 0;
+    int edgeId1,edgeId2;
+    float jacc; 
+    // Count totalines in the file, we are setting 
+    while ( sortedjaccFile  >> jacc ) {
+        if(jacc>0 && jacc<=1.0)
+            totalThresh++;
+    }
+    sortedjaccFile.close(); sortedjaccFile.clear();
+    cout << "Done counting totalines in the file, \nTotal unique Jaccs = " << totalThresh << endl;
+    if(totalThresh==0){
+        cout << "ERROR: there are 0 Jaccs!!!" << endl;
+        exit(1); // terminate with error
+    }
+    // now we want gap between two consecutive thresholds
+    // we want to consider
+    gapBetweenthresh =  totalThresh/nThresh;
+    if(totalThresh < nThresh)
+            gapBetweenthresh = totalThresh;
+    set<float> thresholdSet;
+    set<float> ::reverse_iterator thIt;
+    // ----------------------------
+    totalThresh = -1;
+    sortedjaccFile.open( argv[3] );
+    while ( sortedjaccFile  >> jacc ){
+        totalThresh++;
+        if(totalThresh%gapBetweenthresh!=0){
+            continue;
+        }
         thresholdSet.insert(jacc);
     }
-    jaccFile.close();
+    thresholdSet.insert(1.1);
     cout << "Done with thresholdSet creation." << endl;
-    map< int, set<int > >::iterator iter_i,iter_j;
+    // ---------------------------
+
+    ifstream jaccFile; 
+    jaccFile.open(argv[2]);
+    // read first line
+    jaccFile >> edgeId1 >> edgeId2 >> jacc ;
+    // open the outputfile
+    map< int, set< int> >::iterator iter_i,iter_j;
     set<int>::iterator iterS;
     FILE * threshDensityFile = fopen( argv[3], "w" ); 
-    fprintf( threshDensityFile, "%.6f %.6f " );
+    fclose(threshDensityFile);
+    fprintf( threshDensityFile, "thresh  D\n" );
     for(thIt = thresholdSet.rbegin(); thIt!=thresholdSet.rend(); thIt++){
         threshold = *thIt;
         if (threshold < 0.0 || threshold > 1.0){
             cout << "ERROR: specified threshold not in [0,1]" << endl;
             exit(1);
         }
-        jaccFile.open( argv[2] );
-        while ( jaccFile >> edgeId1 >> edgeId2 >> jacc ) {
-            if ( jacc >= threshold ) {
-                iter_i = edge2iter[ edgeId1 ];
-                iter_j = edge2iter[ edgeId2 ];
-                if ( iter_i != iter_j ) {
-                    // always merge smaller cluster into bigger:
-                    if ( (*iter_j).second.size() > (*iter_i).second.size() ){ // !!!!!!
-                        swap(iter_i, iter_j);
-                    }
-                    // merge cluster j into i and update index for all elements in j:
-                    for (iterS = iter_j->second.begin(); iterS != iter_j->second.end(); iterS++){
-                        iter_i->second.insert( *iterS );
-                        edge2iter[ *iterS ] = iter_i;
-                    }
-                    // delete cluster j:
-                    index2cluster.erase(iter_j);
-                } 
-            } // done merging clusters i and j
-        }
-        jaccFile.close();
+        do{
+            if( jacc < threshold ) 
+                break; 
+            iter_i = edge2iter[ edgeId1 ];
+            iter_j = edge2iter[ edgeId2 ];
+            if ( iter_i != iter_j ) {
+                // always merge smaller cluster into bigger:
+                if ( (*iter_j).second.size() > (*iter_i).second.size() ){ // !!!!!!
+                    swap(iter_i, iter_j);
+                }                
+                // merge cluster j into i and update index for all elements in j:
+                for (iterS = iter_j->second.begin(); iterS != iter_j->second.end(); iterS++){
+                    iter_i->second.insert( *iterS );
+                    edge2iter[ *iterS ] = iter_i;
+                }                
+                // delete cluster j:
+                index2cluster.erase(iter_j);
+            }
+        }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );
         
         // all done clustering, write to file (and calculated partition density):
-        set<int> clusterNodes;
-        int mc, nc;
-        int M = 0, Mns = 0;
-        double wSum = 0.0;
+        M = 0, Mns = 0;
+        wSum = 0.0;
         set< int >::iterator S;
         map< int, set< int > >::iterator it;
         for ( it = index2cluster.begin(); it != index2cluster.end(); it++ ) {
             clusterNodes.clear();
             for (S = it->second.begin(); S != it->second.end(); S++ ){
                 //fprintf( clustersFile, "%i ", *S ); // this leaves a trailing space...!
-                clusterNodes.insert(*S); 
+                clusterNodes.insert(idEdgePairMap[*S].first);
+                clusterNodes.insert(idEdgePairMap[*S].second);
             }
             mc = it->second.size();
             nc = clusterNodes.size();
@@ -115,6 +167,7 @@ int main (int argc, char const *argv[]){
                 wSum += mc * (mc - (nc-1.0)) / ((nc-2.0)*(nc-1.0));
             }
         }  
+        threshDensityFile = fopen( argv[3], "a" ); 
         D = 2.0 * wSum / M;
         if (isinf(D)){
             fprintf( threshDensityFile, "\nERROR: D == -inf \n\n"); 
@@ -123,11 +176,13 @@ int main (int argc, char const *argv[]){
         }
         //*************
         fprintf( threshDensityFile, "%.6f %.6f ", threshold, D);
+        fclose(threshDensityFile);
         if(D > highestD){
             highestD = D;
             highestDThr = threshold;
         } 
     }
+    jaccFile.close(); jaccFile.clear();
     fprintf( threshDensityFile, "\n highest D=%.6f at thresh:%.6f.\n", highestD, highestDThr);
     fclose(threshDensityFile);
     cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
