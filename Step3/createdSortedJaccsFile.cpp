@@ -1,6 +1,6 @@
 /*
 //  $ g++ -O3 -o createdSortedJaccsFile createdSortedJaccsFile.cpp
-//  $ ./createdSortedJaccsFile network.pairs network.jaccs threshDensity.csv
+//  $ ./createdSortedJaccsFile network.jaccs sortedjaccs.csv
 */
 #include <math.h> 
 #include <ctime>
