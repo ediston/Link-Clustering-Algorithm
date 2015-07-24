@@ -32,20 +32,25 @@ int main (int argc, char const *argv[]){
     int edgeId1,edgeId2; 
     float jacc;
     set<float> thresholdSet;
+    set<float> ::reverse_iterator thIt;
+    // read each line from the jacc file
     while ( jaccFile >> edgeId1 >> edgeId2 >> jacc ) {
+        // if this value of jacc does exists
+        // then add inser the value
         if(thresholdSet.count(jacc) == 0)
           thresholdSet.insert(jacc);
     }
     jaccFile.close();jaccFile.clear();
-    cout << "Done with thresholdSet creation." << endl;
+    cout << "Done with thresholdSet creation. total unique jaccs:" << thresholdSet.size() << endl;
     // create the file
     // if exists then overwrite everything
     FILE * sortedJaccsFile = fopen( argv[2], "w" );
     fclose(sortedJaccsFile);
     for(thIt = thresholdSet.rbegin(); thIt!=thresholdSet.rend(); thIt++){
-      threshold = *thIt;
+      jacc = *thIt;
+      // open the file
       sortedJaccsFile = fopen( argv[2], "a" );
-      fprintf( sortedJaccsFile, "%.6f \n", threshold, D);
+      fprintf( sortedJaccsFile, "%.6f \n", jacc);
       fclose(sortedJaccsFile);
     }
     thresholdSet.clear();
