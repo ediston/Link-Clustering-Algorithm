@@ -20,7 +20,7 @@ using namespace std;
 
 int main (int argc, char const *argv[]){
     //************* make sure args are present:
-    if (argc != 4){
+    if (argc != 6){
         cout << "ERROR: something wrong with the inputs" << endl;
         cout << "usage:\n    " << argv[0] << " networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  "
                     << " Nthresholds threshDensity.csv" << endl;
