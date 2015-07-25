@@ -75,6 +75,7 @@ int main (int argc, char const *argv[]){
     if(MODE==0){
        // MODE = 0, some 
       // Nthresholds is the total thresholds user wants us to try
+      int totalThresh = 0;
       int nThresh = atoi(argv[NthArg]);
       cout << "nThresh = " << nThresh << endl;
       sortedjaccFile.open( argv[sortedJaccsArg] );
