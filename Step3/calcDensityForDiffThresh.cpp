@@ -151,9 +151,9 @@ int main (int argc, char const *argv[]){
                 }       
                 
                 // delete cluster j:
-                cout << "Deleting cluster " << endl;
+                //cout << "Deleting cluster " << endl;
                 index2cluster.erase(iter_j);
-                cout << "Done deleteing " << endl;
+                //cout << "Done deleteing " << endl;
             }
         }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );
         cout << " Done!" << endl; 
