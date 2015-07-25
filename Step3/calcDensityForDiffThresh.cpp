@@ -2,7 +2,7 @@
 1. Treat each edge id as a cluster, unordered map from edgeId to a set
 2. also store size of each cluster which will 0 in the begining
 //  $ g++ -std=c++0x -O3 -o calcDensityForDiffThresh calcDensityForDiffThresh.cpp
-//  $ ./calcDensityForDiffThresh networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  Nthresholds threshDensity.csv
+//  $ ./calcDensityForDiffThresh networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  Nthresholds threshDensity.csv MODE
 */
 #include <math.h> 
 #include <ctime>
@@ -20,15 +20,15 @@ using namespace std;
 
 int main (int argc, char const *argv[]){
     //************* make sure args are present:
-    if (argc != 6){
+    if (argc < 6){
         cout << "ERROR: something wrong with the inputs" << endl;
-        cout << "usage:\n    " << argv[0] << " networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  "
-                    << " Nthresholds threshDensity.csv" << endl;
+        cout << "usage:\n    " << argv[0] << "  networkEdgeIdMap.csv network.jaccs sortedjaccs.csv  "
+                    << " threshDensity.csv MODE  <  Nthresholds> or <minthresh maxthresh>" << endl;
         exit(1);
     }
-    // Nthresholds is the total thresholds user wants us to try
-    int nThresh = atoi(argv[4]);
-    cout << "nThresh = " << nThresh << endl;
+    short int newEdgeIdMapArg = 1, jaccsArg = 2, sortedJaccsArg = 3;
+    short int thDFileArg = 4, modeArg = 5, NthArg = 6, minthArg = 6, maxthArg = 7;
+    
     int gapBetweenthresh = 0;
     float threshold = 0;
     float D = 0.0;
@@ -42,7 +42,7 @@ int main (int argc, char const *argv[]){
     
     //************* start load edgelist
     ifstream inFile;
-    inFile.open( argv[1] );
+    inFile.open( argv[newEdgeIdMapArg] );
     if (!inFile) {
         cout << "ERROR: unable to open input file" << endl;
         exit(1); // terminate with error
@@ -65,61 +65,81 @@ int main (int argc, char const *argv[]){
     cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     /// end reading edge ids ----- 
     
-    //----- ----- ----- ----- 
-    ifstream sortedjaccFile;  
-    sortedjaccFile.open( argv[3] );
-    if (!sortedjaccFile) {
-        cout << "ERROR: unable to open sortedjaccFile file" << endl;
-        exit(1); // terminate with error
-    }
-    int totalThresh = 0;
-    int edgeId1,edgeId2;
-    double jacc; 
-    // Count totalines in the file, we are setting 
-    while ( sortedjaccFile  >> jacc ) {
-        if(jacc>0 && jacc<=1.0)
-            totalThresh++;
-    }
-    sortedjaccFile.close(); sortedjaccFile.clear();
-    cout << "Done counting totalines in the file, \nTotal unique Jaccs = " << totalThresh;
-    cout << ".  Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
-    if(totalThresh==0){
-        cout << "ERROR: there are 0 Jaccs!!!" << endl;
-        exit(1); // terminate with error
-    }
-    // now we want gap between two consecutive thresholds
-    // we want to consider
-    gapBetweenthresh =  totalThresh/nThresh;
-    if(totalThresh < nThresh)
-            gapBetweenthresh = totalThresh;
+    //----- ----- ----- ----- int totalThresh = 0;
     set<float> thresholdSet;
     set<float> ::reverse_iterator thIt;
-    cout << "thresholds" << endl;
-    // ----------------------------
-    totalThresh = -1;
-    sortedjaccFile.open( argv[3] );
-    while ( sortedjaccFile  >> jacc ){
-        totalThresh++;
-        if(totalThresh%gapBetweenthresh!=0){
-            continue;
-        }
-        cout << jacc << endl;
-        thresholdSet.insert(jacc);
+    int edgeId1,edgeId2;
+    double jacc; 
+    ifstream sortedjaccFile; 
+    int MODE = atoi(argv[modeArg]);
+    if(MODE==0){
+       // MODE = 0, some 
+      // Nthresholds is the total thresholds user wants us to try
+      int nThresh = atoi(argv[NthArg]);
+      cout << "nThresh = " << nThresh << endl;
+      sortedjaccFile.open( argv[sortedJaccsArg] );
+      if (!sortedjaccFile) {
+          cout << "ERROR: unable to open sortedjaccFile file" << endl;
+          exit(1); // terminate with error
+      }
+      // Count totalines in the file, we are setting 
+      while ( sortedjaccFile  >> jacc ) {
+          if(jacc>0 && jacc<=1.0)
+              totalThresh++;
+      }
+      sortedjaccFile.close(); sortedjaccFile.clear();
+      cout << "Done counting totalines in the file, \nTotal unique Jaccs = " << totalThresh;
+      cout << ".  Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
+      if(totalThresh==0){
+          cout << "ERROR: there are 0 Jaccs!!!" << endl;
+          exit(1); // terminate with error
+      }
+      // now we want gap between two consecutive thresholds
+      // we want to consider
+      gapBetweenthresh =  totalThresh/nThresh;
+      if(totalThresh < nThresh)
+              gapBetweenthresh = totalThresh;  
+      totalThresh = -1;
+      sortedjaccFile.open( argv[sortedJaccsArg] );
+      while ( sortedjaccFile  >> jacc ){
+          totalThresh++;
+          if(totalThresh%gapBetweenthresh!=0){
+              continue;
+          }
+          cout << jacc << endl;
+          thresholdSet.insert(jacc);
+      }
+      sortedjaccFile.close(); sortedjaccFile.clear(); 
+    }else if(MODE==1){
+       sortedjaccFile.open( argv[sortedJaccsArg] );
+       if (!sortedjaccFile) {
+           cout << "ERROR: unable to open sortedjaccFile file" << endl;
+           exit(1); // terminate with error
+       }
+       // Count totalines in the file, we are setting 
+       double minThresh = atof(argv[minthArg]);
+       double maxThresh = atof(argv[maxthArg]);
+       while ( sortedjaccFile  >> jacc ) {
+           if(jacc > maxThresh || jacc < minThresh){
+               continue;
+           } 
+           cout << jacc << endl;
+           thresholdSet.insert(jacc);
+       }
+       sortedjaccFile.close(); sortedjaccFile.clear(); 
     }
-    sortedjaccFile.close(); sortedjaccFile.clear();
-    thresholdSet.insert(1.1);
-    cout << "Done with thresholdSet creation.";
-    cout << "  Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
+    cout << "Done with thresholdSet creation. total:" << thresholdSet.size();
+    cout << " ,  Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     // ---------------------------
 
     ifstream jaccFile; 
-    jaccFile.open(argv[2]);
+    jaccFile.open(argv[jaccsArg]);
     // read first line
     jaccFile >> edgeId1 >> edgeId2 >> jacc ;
     // open the outputfile
     map< int, set< int> >::iterator iter_i,iter_j;
     set<int>::iterator iterS;
-    FILE * threshDensityFile = fopen( argv[5], "w" ); 
+    FILE * threshDensityFile = fopen( argv[thDFileArg], "w" ); 
     fclose(threshDensityFile);
     fprintf( threshDensityFile, "thresh  D\n" );
     long long done = 0;
@@ -178,7 +198,7 @@ int main (int argc, char const *argv[]){
                 wSum += mc * (mc - (nc-1.0)) / ((nc-2.0)*(nc-1.0));
             }
         }  
-        threshDensityFile = fopen( argv[5], "a" ); 
+        threshDensityFile = fopen( argv[thDFileArg], "a" ); 
         D = 2.0 * wSum / M;
         if (isinf(D)){
             fprintf( threshDensityFile, "\nERROR: D == -inf \n\n"); 
@@ -201,6 +221,7 @@ int main (int argc, char const *argv[]){
         lastBegin = clock();
     }
     jaccFile.close(); jaccFile.clear();
+    threshDensityFile = fopen( argv[thDFileArg], "a" ); 
     fprintf( threshDensityFile, "\n highest D=%.6f at thresh:%.6f.\n", highestD, highestDThr);
     fclose(threshDensityFile);
     cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
