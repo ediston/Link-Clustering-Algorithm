@@ -74,7 +74,7 @@ int main (int argc, char const *argv[]){
     }
     int totalThresh = 0;
     int edgeId1,edgeId2;
-    float jacc; 
+    double jacc; 
     // Count totalines in the file, we are setting 
     while ( sortedjaccFile  >> jacc ) {
         if(jacc>0 && jacc<=1.0)
@@ -135,10 +135,10 @@ int main (int argc, char const *argv[]){
         do{
             if( jacc < threshold ) 
                 break; 
-            cout << edgeId1 << " " << edgeId2 << " " << jacc << endl;
             iter_i = edge2iter[ edgeId1 ];
             iter_j = edge2iter[ edgeId2 ];
             if ( iter_i != iter_j ) {
+                cout << edgeId1 << " " << edgeId2 << " " << jacc << endl;
                 // always merge smaller cluster into bigger:
                 if ( (*iter_j).second.size() > (*iter_i).second.size() ){ // !!!!!!
                     swap(iter_i, iter_j);
