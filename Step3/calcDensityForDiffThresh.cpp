@@ -61,7 +61,8 @@ int main (int argc, char const *argv[]){
         index++;
     }
     inFile.close(); inFile.clear();
-    cout << "There were " << index2cluster.size() << " edges." << endl;
+    cout << "There were " << index2cluster.size() << " edges. ";
+    cout << "Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     /// end reading edge ids ----- 
     
     //----- ----- ----- ----- 
@@ -80,7 +81,8 @@ int main (int argc, char const *argv[]){
             totalThresh++;
     }
     sortedjaccFile.close(); sortedjaccFile.clear();
-    cout << "Done counting totalines in the file, \nTotal unique Jaccs = " << totalThresh << endl;
+    cout << "Done counting totalines in the file, \nTotal unique Jaccs = " << totalThresh;
+    cout << ".  Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     if(totalThresh==0){
         cout << "ERROR: there are 0 Jaccs!!!" << endl;
         exit(1); // terminate with error
@@ -104,7 +106,8 @@ int main (int argc, char const *argv[]){
     }
     sortedjaccFile.close(); sortedjaccFile.clear();
     thresholdSet.insert(1.1);
-    cout << "Done with thresholdSet creation." << endl;
+    cout << "Done with thresholdSet creation.";
+    cout << "  Time taken = " << double(clock() - begin)/ CLOCKS_PER_SEC << " seconds. "<< endl;
     // ---------------------------
 
     ifstream jaccFile; 
