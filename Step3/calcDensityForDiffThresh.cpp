@@ -131,10 +131,11 @@ int main (int argc, char const *argv[]){
             cout << "ERROR: specified threshold not in [0,1]: " << threshold << endl;
             exit(1);
         }
-        cout << " Starting new clustering...... " << endl;
+        cout << " Starting new clustering...... " ;
         do{
             if( jacc < threshold ) 
                 break; 
+            cout << edgeId1 << " " << edgeId2 << " " << jacc << endl;
             iter_i = edge2iter[ edgeId1 ];
             iter_j = edge2iter[ edgeId2 ];
             if ( iter_i != iter_j ) {
@@ -143,11 +144,14 @@ int main (int argc, char const *argv[]){
                     swap(iter_i, iter_j);
                 }                
                 // merge cluster j into i and update index for all elements in j:
+                cout << "merging cluster " << endl;
                 for (iterS = iter_j->second.begin(); iterS != iter_j->second.end(); iterS++){
                     iter_i->second.insert( *iterS );
                     edge2iter[ *iterS ] = iter_i;
-                }                
+                }       
+                
                 // delete cluster j:
+                cout << "Deleting cluster " << endl;
                 index2cluster.erase(iter_j);
             }
         }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );
