@@ -94,6 +94,7 @@ int main (int argc, char const *argv[]){
             gapBetweenthresh = totalThresh;
     set<float> thresholdSet;
     set<float> ::reverse_iterator thIt;
+    cout << "thresholds" << endl;
     // ----------------------------
     totalThresh = -1;
     sortedjaccFile.open( argv[3] );
@@ -102,6 +103,7 @@ int main (int argc, char const *argv[]){
         if(totalThresh%gapBetweenthresh!=0){
             continue;
         }
+        cout << jacc << endl;
         thresholdSet.insert(jacc);
     }
     sortedjaccFile.close(); sortedjaccFile.clear();
@@ -129,6 +131,7 @@ int main (int argc, char const *argv[]){
             cout << "ERROR: specified threshold not in [0,1]: " << threshold << endl;
             exit(1);
         }
+        cout << " Starting new clustering...... " << endl;
         do{
             if( jacc < threshold ) 
                 break; 
@@ -147,7 +150,8 @@ int main (int argc, char const *argv[]){
                 // delete cluster j:
                 index2cluster.erase(iter_j);
             }
-        }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );        
+        }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );
+        cout << " Done!" << endl; 
         // all done clustering, write to file (and calculated partition density):
         M = 0, Mns = 0;
         wSum = 0.0;
