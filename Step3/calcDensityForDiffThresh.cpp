@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <set>
 #include <map>
 #include <utility>   // for pairs
@@ -50,9 +50,9 @@ int main (int argc, char const *argv[]){
     // store edge ids in a map
     // each edge id will be a cluster of it's own in the begining
     // each cluster will be og size 1
-    unordered_map< int,  pair<int,int> > idEdgePairMap;
-    unordered_map< int,  set<int > > index2cluster; // O(log n) access too slow?
-    unordered_map< int,  unordered_map< int, set<int > >::iterator > edge2iter;
+    map< int,  pair<int,int> > idEdgePairMap;
+    map< int,  set<int > > index2cluster; // O(log n) access too slow?
+    map< int,  map< int, set<int > >::iterator > edge2iter;
     int ni, nj, edgeId, index = 0;
     while (inFile >> ni >> nj >> edgeId){ 
         idEdgePairMap[ edgeId ] = make_pair(ni,nj);
@@ -117,7 +117,7 @@ int main (int argc, char const *argv[]){
     // read first line
     jaccFile >> edgeId1 >> edgeId2 >> jacc ;
     // open the outputfile
-    unordered_map< int, set< int> >::iterator iter_i,iter_j;
+    map< int, set< int> >::iterator iter_i,iter_j;
     set<int>::iterator iterS;
     FILE * threshDensityFile = fopen( argv[5], "w" ); 
     fclose(threshDensityFile);
@@ -138,13 +138,13 @@ int main (int argc, char const *argv[]){
             iter_i = edge2iter[ edgeId1 ];
             iter_j = edge2iter[ edgeId2 ];
             if ( iter_i != iter_j ) {
-                cout << edgeId1 << " " << edgeId2 << " " << jacc << endl;
+                //cout << edgeId1 << " " << edgeId2 << " " << jacc << endl;
                 // always merge smaller cluster into bigger:
                 if ( (*iter_j).second.size() > (*iter_i).second.size() ){ // !!!!!!
                     swap(iter_i, iter_j);
                 }                
                 // merge cluster j into i and update index for all elements in j:
-                cout << "merging cluster " << endl;
+                //cout << "merging cluster " << endl;
                 for (iterS = iter_j->second.begin(); iterS != iter_j->second.end(); iterS++){
                     iter_i->second.insert( *iterS );
                     edge2iter[ *iterS ] = iter_i;
@@ -153,6 +153,7 @@ int main (int argc, char const *argv[]){
                 // delete cluster j:
                 cout << "Deleting cluster " << endl;
                 index2cluster.erase(iter_j);
+                cout << "Done deleteing " << endl;
             }
         }while ( jaccFile >> edgeId1 >> edgeId2 >> jacc );
         cout << " Done!" << endl; 
@@ -161,7 +162,7 @@ int main (int argc, char const *argv[]){
         wSum = 0.0;
         set< int >::iterator S;
         set<int> clusterNodes;
-        unordered_map< int, set< int > >::iterator it;
+        map< int, set< int > >::iterator it;
         for ( it = index2cluster.begin(); it != index2cluster.end(); it++ ) {
             clusterNodes.clear();
             for (S = it->second.begin(); S != it->second.end(); S++ ){
