@@ -120,6 +120,7 @@ int main (int argc, char const *argv[]){
        // Count totalines in the file, we are setting 
        double minThresh = atof(argv[minthArg]);
        double maxThresh = atof(argv[maxthArg]);
+       cout << "minThresh = " << minThresh << " , maxThresh = " << maxThresh << endl;
        while ( sortedjaccFile  >> jacc ) {
            if(jacc > maxThresh || jacc < minThresh){
                continue;
