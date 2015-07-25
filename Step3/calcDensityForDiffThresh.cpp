@@ -28,6 +28,7 @@ int main (int argc, char const *argv[]){
     }
     // Nthresholds is the total thresholds user wants us to try
     int nThresh = atoi(argv[4]);
+    cout << "nThresh = " << nThresh << endl;
     int gapBetweenthresh = 0;
     float threshold = 0;
     float D = 0.0;
