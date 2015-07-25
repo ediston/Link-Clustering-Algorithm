@@ -123,7 +123,7 @@ int main (int argc, char const *argv[]){
     for(thIt = thresholdSet.rbegin(); thIt!=thresholdSet.rend(); thIt++){
         threshold = *thIt;
         if (threshold < 0.0 || threshold > 1.1){
-            cout << "ERROR: specified threshold not in [0,1]" << endl;
+            cout << "ERROR: specified threshold not in [0,1]: " << threshold << endl;
             exit(1);
         }
         do{
