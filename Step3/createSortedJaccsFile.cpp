@@ -101,6 +101,7 @@ int main (int argc, char const *argv[]){
         }
         thresholdSet.insert(jacc);
     }
+    sortedjaccFile.close(); sortedjaccFile.clear();
     thresholdSet.insert(1.1);
     cout << "Done with thresholdSet creation." << endl;
     // ---------------------------
@@ -112,7 +113,7 @@ int main (int argc, char const *argv[]){
     // open the outputfile
     unordered_map< int, set< int> >::iterator iter_i,iter_j;
     set<int>::iterator iterS;
-    FILE * threshDensityFile = fopen( argv[3], "w" ); 
+    FILE * threshDensityFile = fopen( argv[5], "w" ); 
     fclose(threshDensityFile);
     fprintf( threshDensityFile, "thresh  D\n" );
     long long done = 0;
@@ -164,7 +165,7 @@ int main (int argc, char const *argv[]){
                 wSum += mc * (mc - (nc-1.0)) / ((nc-2.0)*(nc-1.0));
             }
         }  
-        threshDensityFile = fopen( argv[3], "a" ); 
+        threshDensityFile = fopen( argv[5], "a" ); 
         D = 2.0 * wSum / M;
         if (isinf(D)){
             fprintf( threshDensityFile, "\nERROR: D == -inf \n\n"); 
