@@ -122,7 +122,7 @@ int main (int argc, char const *argv[]){
     clock_t lastBegin = clock(); 
     for(thIt = thresholdSet.rbegin(); thIt!=thresholdSet.rend(); thIt++){
         threshold = *thIt;
-        if (threshold < 0.0 || threshold > 1.1){
+        if (threshold < 0.0 || threshold > 1.11){
             cout << "ERROR: specified threshold not in [0,1]: " << threshold << endl;
             exit(1);
         }
