@@ -1,5 +1,5 @@
 /*
-//  $ g++ -O3 -o cluster createClusters.cpp
+//  $ g++ -O3 -o cluster clusterJaccsFile.cpp
 //  $ ./cluster network.pairs network.jaccs network.clusters threshold
 //   
 //     -- network.pairs is an integer edgelist (one edge, two nodes
@@ -30,7 +30,7 @@ int main (int argc, char const *argv[]){
     //************* make sure args are present:
     if (argc != 6){
         cout << "ERROR: something wrong with the inputs" << endl;
-        cout << "usage:\n    " << argv[0] << " network.pairs network.jaccs network.clusters network.cluster_stats threshold" << endl;
+        cout << "usage:\n    " << argv[0] << " network.pairs network.jaccs network.clusters removed.pairs threshold" << endl;
         exit(1);
     }
     float threshold = atof( argv[5] );
@@ -49,16 +49,16 @@ int main (int argc, char const *argv[]){
         exit(1); // terminate with error
     }
     // index should be iterator not integer????
-    map< int,          set<int> > index2cluster; // O(log n) access too slow?
-    map< int, map<int, set<int> >::iterator > edge2iter;
+    map< int,           set<pair<int,int> > > index2cluster; // O(log n) access too slow?
+    map< pair<int,int>, map< int,set<pair<int,int> > >::iterator > edge2iter;
 
-    int ni, nj, edgeId, index = 0;
-    while (inFile >> ni >> nj >> edgeId){ // scan edgelist to populate 
+    int ni, nj, wij, index = 0;
+    while (inFile >> ni >> nj){ // scan edgelist to populate 
     //while (inFile >> ni >> nj >> wij){ // scan edgelist to populate WEIGHTED
-        //if (ni >= nj) swap(ni,nj); // undirected!
+        if (ni >= nj) swap(ni,nj); // undirected!
         
-        index2cluster[ index ].insert( edgeId );         // build cluster index to set of edge-pairs map
-        edge2iter[ edgeId ] = index2cluster.find(index); // build edge pair to cluster iter map ******????
+        index2cluster[ index ].insert( make_pair(ni,nj) );         // build cluster index to set of edge-pairs map
+        edge2iter[ make_pair(ni,nj) ] = index2cluster.find(index); // build edge pair to cluster iter map ******????
         index++;
     }
     inFile.close(); inFile.clear();
@@ -70,15 +70,17 @@ int main (int argc, char const *argv[]){
         cout << "ERROR: unable to open jaccards file" << endl;
         exit(1); // terminate with error
     }
-    int edgeId1,edgeId2; double jacc;
+    int i0,i1,j0,j1; double jacc;
     int idx_i, idx_j;
-    map< int, set<int > >::iterator iter_i,iter_j;
-    set<int>::iterator iterS;
-    while ( jaccFile >> edgeId1 >> edgeId2 >> jacc ) {
-        if ( jacc >= threshold ) { 
+    map< int, set<pair<int,int> > >::iterator iter_i,iter_j;
+    set<pair<int,int> >::iterator iterS;
+    while ( jaccFile >> i0 >> i1 >> j0 >> j1 >> jacc ) {
+        if ( jacc >= threshold ) {
+            if (i0 >= i1) swap(i0,i1); // undirected!
+            if (j0 >= j1) swap(j0,j1); // undirected!
             
-            iter_i = edge2iter[ edgeId1 ];
-            iter_j = edge2iter[ edgeId2 ];
+            iter_i = edge2iter[ make_pair(i0,i1) ];
+            iter_j = edge2iter[ make_pair(j0,j1) ];
             if ( iter_i != iter_j ) {
                 // always merge smaller cluster into bigger:
                 if ( (*iter_j).second.size() > (*iter_i).second.size() ){ // !!!!!!
@@ -105,21 +107,28 @@ int main (int argc, char const *argv[]){
     
     // all done clustering, write to file (and calculated partition density):
     FILE * clustersFile     = fopen( argv[3], "w" );
-    FILE * clusterStatsFile = fopen( argv[4], "w" );
+    FILE * removedPairsFile = fopen( argv[4], "w" );
     
     set<int> clusterNodes;
     int mc, nc;
     int M = 0, Mns = 0;
     double wSum = 0.0;
     
-    set< int >::iterator S;
-    map< int,set< int > >::iterator it;
+    set< pair<int,int> >::iterator S;
+    map< int,set<pair<int,int> > >::iterator it;
     
     for ( it = index2cluster.begin(); it != index2cluster.end(); it++ ) {
+        if(it->second.size()==1){
+            S = it->second.begin();
+            fprintf(removedPairsFile, "%i %i\n", S->first, S->second );
+            continue;
+        }
         clusterNodes.clear();
         for (S = it->second.begin(); S != it->second.end(); S++ ){
-            fprintf( clustersFile, "%i ", *S ); // this leaves a trailing space...!
-            clusterNodes.insert(*S); 
+            fprintf( clustersFile, "%i,%i ", S->first, S->second ); // this leaves a trailing space...!
+            
+            clusterNodes.insert(S->first);
+            clusterNodes.insert(S->second);
         }
         mc =   it->second.size();
         nc = clusterNodes.size();
@@ -128,12 +137,10 @@ int main (int argc, char const *argv[]){
             Mns  += mc;
             wSum += mc * (mc - (nc-1.0)) / ((nc-2.0)*(nc-1.0));
         }
-        
         fprintf( clustersFile, "\n" );
-        fprintf( clusterStatsFile, "%i %i\n", mc, nc );
     }
     fclose(clustersFile);
-    fclose(clusterStatsFile);
+    fclose(removedPairsFile);
     //*************
     
     cout << "The partition density is:" << endl;
