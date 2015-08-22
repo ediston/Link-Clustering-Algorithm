@@ -92,7 +92,7 @@ int main (int argc, char const *argv[]){
             n_j = n_i->next;
             while(n_j) { // next neighbors of n_k
                 head_j = nodeids[n_j->nodeId];
-                if (n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId){
+                if (n_j->nodeId == keystone || n_i->nodeId >= n_j->nodeId){
                     //cout << "n_j->nodeId == keystone or n_i->nodeId >= n_j->nodeId" << endl;
                     n_j = n_j->next;
                     continue;
