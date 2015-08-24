@@ -46,6 +46,23 @@ void addNode(headNode *head, long long newNodeId){
   head->size++;
 }
 
+void addNode2(headNode *head, long long newNodeId){ // approach 2
+  node *tempnode = getNewNode();
+  node *prevnode = getNewNode();
+  node*newNode = getNewNode();
+  prevnode = NULL;
+  tempnode = head->next;
+  while(tempnode && tempnode->nodeId<newNodeId){
+    prevnode = tempnode;
+    tempnode = tempnode->next;
+  }
+  head->size++;
+  newNode->nodeId = newNodeId;
+  if(prevnode) prevnode->next = newNode;
+  else head->next = newNode;
+  newNode->next = tempnode;
+}
+
 long long getCommonNodesCount(headNode *head1, headNode *head2){
   long long count = 0;
   node *ll1node = getNewNode();
