@@ -78,6 +78,12 @@ int main (int argc, char const *argv[]){
     head = getNewHeadNode(); n_i = getNewNode(); n_j = getNewNode();
     head_i = getNewHeadNode(); head_j = getNewHeadNode();
     double curr_jacc;
+    // Let's sort the linked list
+    for (it = nodeids.begin(); it != nodeids.end(); it++) { // loop over keys
+        head = (*it).second;
+        MergeSort(&(head->next));
+    }
+    
     for (it = nodeids.begin(); it != nodeids.end(); it++) { // loop over keys
         keystone = (*it).first;
         head = (*it).second;
